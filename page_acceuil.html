@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🧠 NovaLearn — Data • GIS </title>
+  <meta name="description" content="Maquette e‑learning spécialisée en Data et GIS — une seule page, prête à prototyper." />
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0b1020;--card:#0f162e;--muted:#9fb0c7;--brand:#22c55e;--brand2:#38bdf8}
+    html,body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji"}
+    .glass{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));backdrop-filter:saturate(140%) blur(6px)}
+    .shine{position:relative;overflow:hidden}
+    .shine:after{content:"";position:absolute;inset:-150% -50%;background:linear-gradient(120deg,transparent 35%,rgba(255,255,255,.15),transparent 65%);transform:translateX(-100%);animation:shine 6s infinite}
+    @keyframes shine{to{transform:translateX(100%)}}
+  </style>
+</head>
+<body class="bg-[var(--bg)] text-white">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 border-b border-white/10 bg-[#0b1020]/80 backdrop-blur">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2">
+        <img src="assets/novalearn-logo.png" alt="NovaLearn" class="h-8 w-8 rounded-xl object-cover" />
+        <span class="font-extrabold tracking-tight">NovaLearn</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm text-white/80">
+       
+       
+      </nav>
+      <div class="flex items-center gap-3">
+        <button id="btn-signin" class="px-3 py-1.5 text-sm rounded-xl border border-white/15 hover:border-white/30" data-i18n="auth.signin">Se connecter</button>
+        <button id="btn-signout" class="hidden px-3 py-1.5 text-sm rounded-xl border border-white/15 hover:border-white/30" data-i18n="auth.signout">Se déconnecter</button>
+        <button id="btn-signup" class="px-3 py-1.5 text-sm rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold" data-i18n="auth.signup">S'inscrire</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10 opacity-30" aria-hidden="true">
+      <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1200 600"><defs>
+        <linearGradient id="g" x1="0" x2="1"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient>
+      </defs>
+      <circle cx="150" cy="120" r="180" fill="url(#g)"/>
+      <circle cx="1050" cy="480" r="220" fill="url(#g)"/>
+    </svg>
+    </div>
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <div class="grid md:grid-cols-2 items-center gap-10">
+        <div>
+          <div class="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-emerald-200 text-xs mb-4" data-i18n="hero.badge">Nouveau • Parcours</div>
+          <h1 class="text-4xl md:text-5xl font-extrabold leading-tight" data-i18n-html="hero.title">De zéro à expert en <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Data & GIS</span></h1>
+          <p class="mt-4 text-white/80 max-w-xl" data-i18n="hero.subtitle">Apprends par la pratique avec des projets réels, notebooks interactifs et jeux de données géospatiaux. Reçois des recommandations personnalisées par l'IA.</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#catalogue" class="px-5 py-3 rounded-2xl bg-emerald-500 text-black font-semibold hover:bg-emerald-400" data-i18n="hero.ctaBrowse">Parcourir les cours</a>
+ 
+          </div>
+          <div class="mt-6 flex items-center gap-4 text-xs text-white/60">
+            <div class="flex -space-x-2">
+              <div class="h-6 w-6 rounded-full bg-white/20"></div>
+              <div class="h-6 w-6 rounded-full bg-white/20"></div>
+              <div class="h-6 w-6 rounded-full bg-white/20"></div>
+            </div>
+            <span data-i18n="hero.socialproof">+8 400 apprenants • 4.8/5 satisfaction</span>
+          </div>
+        </div>
+        <div class="shine">
+          <div class="glass rounded-3xl border border-white/10 p-4 shadow-2xl">
+            <article class="relative rounded-2xl border border-emerald-400/30 bg-[var(--card)] hover:border-emerald-400/50 transition flex flex-col">
+              <span class="absolute top-2 left-2 text-[10px] md:text-xs rounded-full bg-emerald-500 text-black font-semibold px-2 py-0.5 border border-emerald-400/60 shadow-sm">Meilleur rapport qualité/prix</span>
+              <div class="h-28 rounded-t-2xl bg-gradient-to-br from-emerald-400/25 to-sky-400/15"></div>
+              <div class="p-5 flex-1 flex flex-col">
+                <div class="text-xs text-emerald-300 flex items-center justify-between">
+                  <span>QGIS</span>
+                  <span class="rounded-full bg-emerald-400/10 text-emerald-300 px-2 py-0.5">2000€</span>
+                </div>
+                <h3 class="mt-2 font-semibold text-emerald-300">Pack Avancé Qgis</h3>
+                <p class="mt-1 text-sm text-white/75">Niveaux 1 : débutant, niveau 2: intermédiaire et niveau 3 : avancé réunis.</p>
+                <div class="mt-4 flex items-center justify-between">
+                  <span class="text-xs text-white/60">4 à 15 jours</span>
+                  <a href="qgis_formation_niveau_1.html" class="px-3 py-1.5 text-sm rounded-xl bg-emerald-500 text-black font-semibold hover:bg-emerald-400">Découvrir le pack</a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Parcours 
+  <section id="parcours" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+    <div class="flex items-end justify-between mb-8">
+      
+      <h2 class="text-2xl md:text-3xl font-bold" data-i18n="paths.title">Parcours professionnels</h2>
+      <a href="#" class="text-sm text-emerald-300 hover:text-emerald-200" data-i18n="common.viewAll">Voir tout</a>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <-- Data --
+      <article class="rounded-2xl border border-white/10 bg-[var(--card)] p-6 hover:border-white/20 transition">
+        <div class="text-xs text-white/60">Durée ~ 4 mois</div>
+        <h3 class="mt-1 text-xl font-semibold">Data Scientist</h3>
+        <p class="mt-2 text-white/80 text-sm">Python, Pandas, Modèles ML, MLOps léger, déploiement API.</p>
+        <ul class="mt-4 space-y-2 text-sm text-white/75 list-disc list-inside">
+          <li>Nettoyage & feature engineering</li>
+          <li>Modèles supervisés & non supervisés</li>
+          <li>Suivi d'expériences</li>
+        </ul>
+        <div class="mt-5 flex items-center justify-between">
+          <span class="text-xs text-white/60">Certificat inclus</span>
+          <button class="px-4 py-2 rounded-xl bg-emerald-500 text-black font-semibold">S'inscrire</button>
+        </div>
+      </article>
+      <-- GIS --
+      <article class="rounded-2xl border border-white/10 bg-[var(--card)] p-6 hover:border-white/20 transition">
+        <div class="text-xs text-white/60">Durée ~ 3 mois</div>
+        <h3 class="mt-1 text-xl font-semibold">Analyste SIG</h3>
+        <p class="mt-2 text-white/80 text-sm">Bases SIG, géotraitements, cartes web, données raster & vecteur.</p>
+        <ul class="mt-4 space-y-2 text-sm text-white/75 list-disc list-inside">
+          <li>Projections & géotuiles</li>
+          <li>Analyse spatiale</li>
+          <li>Publication web (Leaflet/MapLibre)</li>
+        </ul>
+        <div class="mt-5 flex items-center justify-between">
+          <span class="text-xs text-white/60">Projet fil rouge</span>
+          <button class="px-4 py-2 rounded-xl bg-emerald-500 text-black font-semibold">S'inscrire</button>
+        </div>
+      </article>
+      <-- AI --
+      <article class="rounded-2xl border border-white/10 bg-[var(--card)] p-6 hover:border-white/20 transition">
+        <div class="text-xs text-white/60">Durée ~ 5 mois</div>
+        <h3 class="mt-1 text-xl font-semibold">Ingénieur IA appliquée</h3>
+        <p class="mt-2 text-white/80 text-sm">Deep Learning, LLM, IA géospatiale, vector stores, éthique.</p>
+        <ul class="mt-4 space-y-2 text-sm text-white/75 list-disc list-inside">
+          <li>Vision & NLP pratiques</li>
+          <li>LLM Ops & prompt engineering</li>
+          <li>Géo‑IA (raster → modèles)</li>
+        </ul>
+        <div class="mt-5 flex items-center justify-between">
+          <span class="text-xs text-white/60">Mentorat hebdo</span>
+          <button class="px-4 py-2 rounded-xl bg-emerald-500 text-black font-semibold">S'inscrire</button>
+        </div>
+      </article>
+    </div>
+  </section>
+-->
+  <!-- Catalogue des cours -->
+  <section id="catalogue" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-bold" data-i18n="catalog.title">Catalogue des cours</h2>
+        <p class="text-white/70 text-sm" data-i18n="catalog.subtitle">Recherche, filtres, progression et aperçu rapide.</p>
+      </div>
+      <div class="flex gap-3">
+        <input id="search" type="text" placeholder="Rechercher un cours…" data-i18n-placeholder="catalog.search" class="w-64 rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        <select id="filter" class="rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-sm focus:outline-none">
+          <option value="" data-i18n="catalog.filterAll">Tous les domaines</option>
+          <option>Data</option>
+          <option>GIS</option>
+          <option data-i18n="catalog.ai">IA</option>
+        </select>
+      </div>
+    </div>
+
+
+    <!-- Tarifs QGIS -->
+    <div class="mt-8 mb-6">
+      
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Niveau 1 (template-like card) -->
+        <article class="rounded-2xl border border-white/10 bg-[var(--card)] hover:border-white/20 transition flex flex-col">
+          <div class="h-28 rounded-t-2xl bg-gradient-to-br from-emerald-400/20 to-sky-400/10"></div>
+          <div class="p-5 flex-1 flex flex-col">
+            <div class="text-xs text-white/60 flex items-center justify-between">
+              <span>SIG</span>
+              <span class="rounded-full bg-white/5 px-2 py-0.5">700€</span>
+            </div>
+            <h3 class="mt-2 font-semibold">QGIS Niveau 1</h3>
+            <p class="mt-1 text-sm text-white/75">Découverte, données, premières cartes.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs text-white/60">1 à 5 jours</span>
+              <a href="qgis_formation_niveau_1.html" class="px-3 py-1.5 text-sm rounded-xl bg-emerald-500 text-black font-semibold hover:bg-emerald-400">Démarrer</a>
+            </div>
+          </div>
+        </article>
+        <!-- Niveau 2 (template-like card) -->
+        <article class="rounded-2xl border border-white/10 bg-[var(--card)] hover:border-white/20 transition flex flex-col">
+          <div class="h-28 rounded-t-2xl bg-gradient-to-br from-emerald-400/20 to-sky-400/10"></div>
+          <div class="p-5 flex-1 flex flex-col">
+            <div class="text-xs text-white/60 flex items-center justify-between">
+              <span>SIG</span>
+              <span class="rounded-full bg-white/5 px-2 py-0.5">700€</span>
+            </div>
+            <h3 class="mt-2 font-semibold">QGIS Niveau 2</h3>
+            <p class="mt-1 text-sm text-white/75">SCR, calculatrice, jointures, raster.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs text-white/60">1 à 5 jours</span>
+              <a href="qgis_formation_niveau_2.html" class="px-3 py-1.5 text-sm rounded-xl bg-emerald-500 text-black font-semibold hover:bg-emerald-400">Démarrer</a>
+            </div>
+          </div>
+        </article>
+        <!-- Niveau 3 (template-like card) -->
+        <article class="rounded-2xl border border-white/10 bg-[var(--card)] hover:border-white/20 transition flex flex-col">
+          <div class="h-28 rounded-t-2xl bg-gradient-to-br from-emerald-400/20 to-sky-400/10"></div>
+          <div class="p-5 flex-1 flex flex-col">
+            <div class="text-xs text-white/60 flex items-center justify-between">
+              <span>SIG</span>
+              <span class="rounded-full bg-white/5 px-2 py-0.5">700€</span>
+            </div>
+            <h3 class="mt-2 font-semibold">QGIS Niveau 3</h3>
+            <p class="mt-1 text-sm text-white/75">Modélisateur, SQL, NDVI, atlas.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs text-white/60">1 à 5 jours</span>
+              <a href="qgis_formation_niveau_3.html" class="px-3 py-1.5 text-sm rounded-xl bg-emerald-500 text-black font-semibold hover:bg-emerald-400">Démarrer</a>
+            </div>
+          </div>
+        </article>
+        <!-- Pack 3 niveaux (template-like card, highlighted) -->
+        <article class="rounded-2xl border border-emerald-400/30 bg-[var(--card)] hover:border-emerald-400/50 transition flex flex-col">
+          <div class="h-28 rounded-t-2xl bg-gradient-to-br from-emerald-400/25 to-sky-400/15"></div>
+          <div class="p-5 flex-1 flex flex-col">
+            <div class="text-xs text-emerald-300 flex items-center justify-between">
+              <span>SIG</span>
+              <span class="rounded-full bg-emerald-400/10 text-emerald-300 px-2 py-0.5">2000€</span>
+            </div>
+            <h3 class="mt-2 font-semibold text-emerald-300">QGIS Pack 3 niveaux</h3>
+            <p class="mt-1 text-sm text-white/75">Niveaux 1, 2 et 3 réunis.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs text-white/60">1 à 5 j par niveau</span>
+              <a href="#" data-href="qgis_formation_niveau_1.html" class="requires-auth px-3 py-1.5 text-sm rounded-xl bg-emerald-500 text-black font-semibold">Découvrir le pack</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div id="course-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Template d'une carte cours (dupliquée en JS) -->
+    </div>
+
+    <template id="course-card">
+      <article class="rounded-2xl border border-white/10 bg-[var(--card)] hover:border-white/20 transition flex flex-col">
+        <div class="h-28 rounded-t-2xl bg-gradient-to-br from-emerald-400/20 to-sky-400/10"></div>
+        <div class="p-5 flex-1 flex flex-col">
+          <div class="text-xs text-white/60 flex items-center justify-between">
+            <span data-field="domain">Data</span>
+            <span class="rounded-full bg-white/5 px-2 py-0.5" data-field="level">Débutant</span>
+          </div>
+          <h3 class="mt-2 font-semibold" data-field="title">Titre du cours</h3>
+          <p class="mt-1 text-sm text-white/75" data-field="desc">Description courte…</p>
+          <div class="mt-4 flex items-center justify-between">
+            <span class="text-xs text-white/60" data-field="duration">4h 20</span>
+            <button class="px-3 py-1.5 text-sm rounded-xl bg-emerald-500 text-black font-semibold" data-action="preview">Aperçu</button>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <!-- Modal aperçu cours -->
+    <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center">
+      <div class="absolute inset-0 bg-black/60"></div>
+      <div class="relative z-10 w-full max-w-2xl rounded-2xl border border-white/10 bg-[var(--card)] p-6">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-xs text-white/60" id="m-domain">Domaine</p>
+            <h3 class="text-xl font-semibold mt-1" id="m-title">Titre cours</h3>
+          </div>
+          <button id="m-close" class="h-9 w-9 rounded-xl border border-white/10 hover:border-white/30">✕</button>
+        </div>
+        <p class="mt-3 text-white/80" id="m-desc">Description…</p>
+        <div class="mt-4 text-sm text-white/70" id="m-details" data-i18n="modal.details">Niveau • Durée • Pré‑requis</div>
+        <div class="mt-6 flex gap-3">
+          <button id="m-start" class="px-4 py-2 rounded-xl bg-emerald-500 text-black font-semibold" data-i18n="modal.start">Commencer le cours</button>
+          <button class="px-4 py-2 rounded-xl border border-white/15 hover:border-white/35" data-i18n="modal.add">Ajouter à ma liste</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tableau de bord (mock) -->
+  <section id="dashboard" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+    <div class="flex items-end justify-between mb-6">
+      <h2 class="text-2xl md:text-3xl font-bold" data-i18n="dashboard.title">Aperçu tableau de bord</h2>
+      <a href="#" class="text-sm text-emerald-300 hover:text-emerald-200" data-i18n="common.viewExample">Voir un exemple</a>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="rounded-2xl border border-white/10 bg-[var(--card)] p-6">
+        <p class="text-sm text-white/60">Progression globale</p>
+        <div class="mt-3 h-3 w-full rounded-full bg-white/10 overflow-hidden">
+          <div class="h-full bg-emerald-500" style="width:62%"></div>
+        </div>
+        <p class="mt-2 text-sm text-white/70">62% des parcours complétés</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-[var(--card)] p-6">
+        <p class="text-sm text-white/60">Recommandé par l'IA</p>
+        <ul class="mt-3 text-sm text-white/80 space-y-2">
+          <li>• Introduction à GeoPandas</li>
+          <li>• Feature Stores pour LLM</li>
+          <li>• MapLibre : cartes web</li>
+        </ul>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-[var(--card)] p-6">
+        <p class="text-sm text-white/60">Badges</p>
+        <div class="mt-3 flex gap-2">
+          <span class="px-2.5 py-1 text-xs rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">GIS Basics</span>
+          <span class="px-2.5 py-1 text-xs rounded-lg bg-sky-500/15 text-sky-300 border border-sky-400/30">ML Rookie</span>
+          <span class="px-2.5 py-1 text-xs rounded-lg bg-white/10 text-white/80 border border-white/20">Map Tiler</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Ressources / Footer 
+  <section id="ressources" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+    <div class="rounded-3xl border border-white/10 bg-[var(--card)] p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div>
+        <h3 class="text-xl font-semibold" data-i18n="resources.title">Ressources open data & notebooks</h3>
+        <p class="text-white/75 text-sm mt-1" data-i18n="resources.subtitle">Jeux de données, shapefiles, notebooks prêts à exécuter.</p>
+      </div>
+      <div class="flex gap-3">
+        <button class="px-4 py-2 rounded-xl border border-white/15 hover:border-white/35" data-i18n="resources.explore">Explorer</button>
+        <button class="px-4 py-2 rounded-xl bg-emerald-500 text-black font-semibold" data-i18n="resources.download">Télécharger</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="border-t border-white/10">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 text-sm text-white/70">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <p data-i18n="footer.copy">© 2025 NovaLearn. Tous droits réservés.</p>
+        <nav class="flex gap-4">
+          <a href="#" class="hover:text-white" data-i18n="footer.tos">CGU</a>
+          <a href="#" class="hover:text-white" data-i18n="footer.privacy">Confidentialité</a>
+          <a href="#" class="hover:text-white" data-i18n="footer.contact">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </footer> -->
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="hidden fixed inset-0 z-50 items-center justify-center">
+    <div class="absolute inset-0 bg-black/60"></div>
+    <div class="relative z-10 w-full max-w-sm rounded-2xl border border-white/10 bg-[var(--card)] p-6">
+      <h3 class="text-xl font-semibold" data-i18n="login.title">Connexion requise</h3>
+      <p class="mt-1 text-sm text-white/70" data-i18n="login.subtitle">Veuillez vous connecter pour accéder à cette formation.</p>
+      <form id="login-form" class="mt-4 space-y-3">
+        <div>
+          <label class="text-xs text-white/60" for="login-email" data-i18n="login.emailLabel">Email</label>
+          <input id="login-email" type="email" required class="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="vous@domaine.com" />
+        </div>
+        <div>
+          <label class="text-xs text-white/60" for="login-password" data-i18n="login.passwordLabel">Mot de passe</label>
+          <input id="login-password" type="password" required class="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="••••••••" />
+        </div>
+        <div id="login-error" class="hidden text-xs text-red-300"></div>
+        <div class="pt-2 flex gap-3">
+          <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-500 text-black font-semibold" data-i18n="login.submit">Se connecter</button>
+          <button type="button" id="login-cancel" class="px-4 py-2 rounded-xl border border-white/15 hover:border-white/35" data-i18n="login.cancel">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Demo Data & Interactions (vanilla JS) -->
+  <script>
+    // i18n dictionary
+    const I18N = {
+      fr: {
+        'nav.courses':'Cours','nav.paths':'Parcours','nav.community':'Communauté','nav.resources':'Ressources',
+        'auth.signin':'Se connecter','auth.signup':'S\'inscrire','auth.signout':'Se déconnecter',
+        'hero.badge':'Nouveau • Parcours',
+        'hero.title':'De zéro à expert en <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Data & GIS</span>',
+        'hero.subtitle':'Apprends par la pratique avec des projets réels, notebooks interactifs et jeux de données géospatiaux. Reçois des recommandations personnalisées par l\'IA.',
+        'hero.ctaBrowse':'Parcourir les cours','hero.ctaPaths':'Voir les parcours','hero.socialproof':'+8 400 apprenants • 4.8/5 satisfaction',
+        'paths.title':'Parcours professionnels','common.viewAll':'Voir tout','common.viewExample':'Voir un exemple',
+        'catalog.title':'Catalogue des cours','catalog.subtitle':'Recherche, filtres, progression et aperçu rapide.','catalog.search':'Rechercher un cours…','catalog.filterAll':'Tous les domaines','catalog.ai':'IA',
+        'modal.details':'Niveau • Durée • Pré‑requis','modal.start':'Commencer le cours','modal.add':'Ajouter à ma liste',
+        'dashboard.title':'Aperçu tableau de bord',
+        'community.title':'Communauté','community.join':'Rejoindre le forum',
+        'resources.title':'Ressources open data & notebooks','resources.subtitle':'Jeux de données, shapefiles, notebooks prêts à exécuter.','resources.explore':'Explorer','resources.download':'Télécharger',
+        'footer.copy':'© 2025 NovaLearn. Tous droits réservés.','footer.tos':'CGU','footer.privacy':'Confidentialité','footer.contact':'Contact',
+        'login.title':'Connexion requise','login.subtitle':'Veuillez vous connecter pour accéder à cette formation.',
+        'login.emailLabel':'Email','login.passwordLabel':'Mot de passe','login.submit':'Se connecter','login.cancel':'Annuler'
+      },
+      en: {
+        'nav.courses':'Courses','nav.paths':'Paths','nav.community':'Community','nav.resources':'Resources',
+        'auth.signin':'Sign in','auth.signup':'Sign up','auth.signout':'Sign out',
+        'hero.badge':'New •  paths',
+        'hero.title':'From zero to expert in <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Data & GIS </span>',
+        'hero.subtitle':'Learn by doing with real projects, interactive notebooks and geospatial datasets. Get AI‑powered recommendations.',
+        'hero.ctaBrowse':'Browse courses','hero.ctaPaths':'View paths','hero.socialproof':'8,400+ learners • 4.8/5 satisfaction',
+        'paths.title':'Professional paths','common.viewAll':'View all','common.viewExample':'See an example',
+        'catalog.title':'Course catalog','catalog.subtitle':'Search, filters, progress and quick preview.','catalog.search':'Search a course…','catalog.filterAll':'All domains','catalog.ai':'AI',
+        'modal.details':'Level • Duration • Prerequisites','modal.start':'Start course','modal.add':'Add to my list',
+        'dashboard.title':'Dashboard preview',
+        'community.title':'Community','community.join':'Join the forum',
+        'resources.title':'Open data & notebooks','resources.subtitle':'Datasets, shapefiles, ready‑to‑run notebooks.','resources.explore':'Explore','resources.download':'Download',
+        'footer.copy':'© 2025 NovaLearn. All rights reserved.','footer.tos':'Terms','footer.privacy':'Privacy','footer.contact':'Contact',
+        'login.title':'Sign-in required','login.subtitle':'Please sign in to access this course.',
+        'login.emailLabel':'Email','login.passwordLabel':'Password','login.submit':'Sign in','login.cancel':'Cancel'
+      }
+    };
+
+    function applyI18n(lang){
+      document.documentElement.setAttribute('lang', lang);
+      // textContent
+      document.querySelectorAll('[data-i18n]').forEach(el=>{
+        const key = el.getAttribute('data-i18n');
+        if(I18N[lang] && I18N[lang][key]) el.textContent = I18N[lang][key];
+      });
+      // innerHTML for rich entries
+      document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+        const key = el.getAttribute('data-i18n-html');
+        if(I18N[lang] && I18N[lang][key]) el.innerHTML = I18N[lang][key];
+      });
+      // placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+        const key = el.getAttribute('data-i18n-placeholder');
+        if(I18N[lang] && I18N[lang][key]) el.setAttribute('placeholder', I18N[lang][key]);
+      });
+      // persist
+      try{ localStorage.setItem('lang', lang);}catch(e){}
+      // adjust modal details dynamic part on next open via openModal
+    }
+
+    function initLang(){
+      const select = document.getElementById('lang-switch');
+      const saved = (typeof localStorage!=='undefined' && localStorage.getItem('lang')) || 'fr';
+      if(select){ select.value = saved; select.addEventListener('change', e=>applyI18n(e.target.value)); }
+      applyI18n(saved);
+    }
+
+    // Simple client-side auth (demo)
+    function isAuthed(){
+      try{ return localStorage.getItem('auth')==='1'; }catch(e){ return false; }
+    }
+    function setAuthed(v){
+      try{ localStorage.setItem('auth', v?'1':'0'); }catch(e){}
+      updateAuthUI();
+    }
+    function updateAuthUI(){
+      const signedIn = isAuthed();
+      const btnIn = document.getElementById('btn-signin');
+      const btnUp = document.getElementById('btn-signup');
+      const btnOut = document.getElementById('btn-signout');
+      if(btnIn) btnIn.classList.toggle('hidden', signedIn);
+      if(btnUp) btnUp.classList.toggle('hidden', signedIn);
+      if(btnOut) btnOut.classList.toggle('hidden', !signedIn);
+    }
+    function openLoginModal(){
+      const m = document.getElementById('login-modal');
+      if(!m) return;
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      const err = document.getElementById('login-error');
+      if(err){ err.classList.add('hidden'); err.textContent=''; }
+    }
+    function closeLoginModal(){
+      const m = document.getElementById('login-modal');
+      if(!m) return;
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    // After login, we can perform a pending action (like navigating)
+    let pendingAction = null;
+
+    function requireAuth(action){
+      if(isAuthed()) { action && action(); return; }
+      pendingAction = action || null;
+      openLoginModal();
+    }
+
+   
+
+    const grid = document.getElementById('course-grid');
+    const tpl = document.getElementById('course-card');
+
+    function render(courses){
+      grid.innerHTML = '';
+      courses.forEach(c => {
+        const node = tpl.content.cloneNode(true);
+        node.querySelector('[data-field="domain"]').textContent = c.domain;
+        node.querySelector('[data-field="level"]').textContent = c.level;
+        node.querySelector('[data-field="title"]').textContent = c.title;
+        node.querySelector('[data-field="desc"]').textContent = c.desc;
+        node.querySelector('[data-field="duration"]').textContent = c.duration;
+        node.querySelector('[data-action="preview"]').addEventListener('click', ()=>openModal(c));
+        grid.appendChild(node);
+      })
+    }
+
+    const search = document.getElementById('search');
+    const filter = document.getElementById('filter');
+
+    function applyFilters(){
+      const q = (search.value||'').toLowerCase();
+      const f = filter.value;
+      const out = COURSES.filter(c => {
+        const okQ = !q || c.title.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q);
+        const okF = !f || c.domain === f;
+        return okQ && okF;
+      });
+      render(out);
+    }
+
+    search.addEventListener('input', applyFilters);
+    filter.addEventListener('change', applyFilters);
+
+    // Modal logic
+    const modal = document.getElementById('modal');
+    const mClose = document.getElementById('m-close');
+    function openModal(c){
+      document.getElementById('m-domain').textContent = c.domain + ' • ' + c.level;
+      document.getElementById('m-title').textContent = c.title;
+      document.getElementById('m-desc').textContent = c.desc;
+      const lang = (typeof localStorage!=='undefined' && localStorage.getItem('lang')) || 'fr';
+      const base = I18N[lang]['modal.details'] || 'Level • Duration • Prerequisites';
+      document.getElementById('m-details').textContent = base;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    function closeModal(){
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+    mClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+    const mStart = document.getElementById('m-start');
+    if(mStart){
+      mStart.addEventListener('click', ()=>{
+        requireAuth(()=>{ /* start course action could navigate to a player or course page */ closeModal(); });
+      });
+    }
+
+    // Initial render
+    render(COURSES);
+    initLang();
+    updateAuthUI();
+
+    // Header auth buttons
+    const btnSignin = document.getElementById('btn-signin');
+    const btnSignout = document.getElementById('btn-signout');
+    if(btnSignin){ btnSignin.addEventListener('click', openLoginModal); }
+    if(btnSignout){ btnSignout.addEventListener('click', ()=> setAuthed(false)); }
+
+    // Login modal wiring
+    const loginModal = document.getElementById('login-modal');
+    const loginForm = document.getElementById('login-form');
+    const loginCancel = document.getElementById('login-cancel');
+    if(loginCancel){ loginCancel.addEventListener('click', closeLoginModal); }
+    if(loginModal){ loginModal.addEventListener('click', (e)=>{ if(e.target===loginModal) closeLoginModal(); }); }
+    if(loginForm){
+      loginForm.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        const pwd = document.getElementById('login-password').value;
+        const err = document.getElementById('login-error');
+        // Demo validation: any non-empty email/pass accepted
+        if(!email || !pwd){ if(err){ err.textContent = 'Veuillez renseigner vos identifiants.'; err.classList.remove('hidden'); } return; }
+        setAuthed(true);
+        closeLoginModal();
+        if(typeof pendingAction === 'function'){ try{ pendingAction(); } finally { pendingAction = null; } }
+      });
+    }
+
+    // Protect QGIS quick links
+    document.querySelectorAll('a.requires-auth').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const href = a.getAttribute('data-href');
+        requireAuth(()=>{ window.location.href = href; });
+      });
+    });
+  </script>
+</body>
+</html>
