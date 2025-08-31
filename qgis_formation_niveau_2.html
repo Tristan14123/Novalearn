@@ -10,10 +10,10 @@
                 var authed = (localStorage.getItem('auth') === '1');
                 if (!authed) {
                     try { sessionStorage.setItem('returnAfterLogin', location.pathname.split('/').pop()); } catch (e) {}
-                    window.location.href = 'page_acceuil.html';
+                    window.location.href = 'index.html';
                 }
             } catch (e) {
-                window.location.href = 'page_acceuil.html';
+                window.location.href = 'index.html';
             }
         })();
     </script>
