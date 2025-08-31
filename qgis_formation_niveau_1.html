@@ -11,10 +11,10 @@
                 if (!authed) {
                     // Remember intended page and redirect to homepage to log in
                     try { sessionStorage.setItem('returnAfterLogin', location.pathname.split('/').pop()); } catch (e) {}
-                    window.location.href = 'page_acceuil.html';
+                    window.location.href = 'index.html';
                 }
             } catch (e) {
-                window.location.href = 'page_acceuil.html';
+                window.location.href = 'index.html';
             }
         })();
     </script>
