@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation : Initiation au Développement d'Applications Web avec IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Academia -->
+    <!-- Application Structure Plan: A single-page dashboard layout. A top section introduces the course and presents a Chart.js donut chart visualizing the breakdown of the four core modules. Below this, a responsive grid displays four clickable "module cards". Clicking a card dynamically reveals a detailed syllabus for that module in a dedicated content area below the grid, using a smooth scroll and content update. This structure is chosen for its non-linear, user-driven exploration, providing an immediate high-level understanding while allowing for deep dives into specific topics without leaving the page, mirroring modern e-learning platforms. -->
+    <!-- Visualization & Content Choices: 1. Report Info: Course structure with 4 modules -> Goal: Inform about module weight -> Viz/Presentation: Donut Chart -> Interaction: Hover tooltips -> Justification: Excellent for showing parts of a whole, giving an instant overview of the course composition -> Library: Chart.js (Canvas). 2. Report Info: Detailed curriculum per module -> Goal: Organize and present learning objectives -> Viz/Presentation: Structured HTML cards & interactive checklists -> Interaction: Click main module card to display its content; toggle checkboxes -> Justification: Breaks down information into manageable, interactive chunks, providing a sense of progression. -> Library/Method: Vanilla JS for DOM manipulation. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F4;
+            color: #1C1917;
+        }
+        .module-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .module-card.active {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .task-item label {
+            cursor: pointer;
+        }
+        .task-item input:checked + span {
+            text-decoration: line-through;
+            color: #78716C;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-stone-800 mb-4">Phase 1 : Initiation au Développement d'Applications Web IA</h1>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Posez les bases du développement d'applications intégrant l'IA en vous familiarisant avec les environnements et outils fondamentaux.</p>
+        </header>
+
+        <section id="overview" class="mb-16">
+            <div class="bg-white rounded-xl shadow-sm p-8 flex flex-col lg:flex-row items-center gap-8">
+                <div class="w-full lg:w-1/2">
+                    <h2 class="text-2xl font-bold text-stone-800 mb-4">Structure de la Formation</h2>
+                    <p class="text-stone-600 mb-4">Cette phase initiale est conçue pour vous donner une base solide et équilibrée. Elle se répartit en quatre modules clés, chacun se concentrant sur une compétence essentielle. La répartition ci-contre vous donne un aperçu de l'importance relative de chaque module dans le parcours d'apprentissage.</p>
+                    <p class="text-stone-600">Explorez chaque module pour découvrir le programme détaillé, les objectifs pédagogiques et les projets pratiques qui vous attendent.</p>
+                </div>
+                <div class="w-full lg:w-1/2 flex justify-center">
+                    <div class="chart-container">
+                        <canvas id="courseStructureChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <main>
+            <div id="modules" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div id="card-web" class="module-card bg-white p-6 rounded-xl border-2 border-transparent cursor-pointer" data-module="web">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-blue-100 rounded-lg mr-4">
+                            <span class="text-2xl">🌐</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-stone-800">Développement Web</h3>
+                    </div>
+                    <p class="text-stone-600">Maîtrisez les outils et techniques pour créer des interfaces web robustes et interactives.</p>
+                </div>
+                <div id="card-data" class="module-card bg-white p-6 rounded-xl border-2 border-transparent cursor-pointer" data-module="data">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-green-100 rounded-lg mr-4">
+                            <span class="text-2xl">🗃️</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-stone-800">Gestion des Données</h3>
+                    </div>
+                    <p class="text-stone-600">Apprenez à interroger des bases de données pour extraire les informations nécessaires.</p>
+                </div>
+                <div id="card-version" class="module-card bg-white p-6 rounded-xl border-2 border-transparent cursor-pointer" data-module="version">
+                     <div class="flex items-center mb-4">
+                        <div class="p-3 bg-purple-100 rounded-lg mr-4">
+                            <span class="text-2xl">🌿</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-stone-800">Gestion de Version</h3>
+                    </div>
+                    <p class="text-stone-600">Utilisez Git pour suivre, gérer et collaborer sur vos projets de code de manière professionnelle.</p>
+                </div>
+                <div id="card-ai" class="module-card bg-white p-6 rounded-xl border-2 border-transparent cursor-pointer" data-module="ai">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-yellow-100 rounded-lg mr-4">
+                            <span class="text-2xl">🤖</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-stone-800">Concepts de l'IA</h3>
+                    </div>
+                    <p class="text-stone-600">Découvrez comment intégrer des fonctionnalités d'IA dans vos applications web.</p>
+                </div>
+            </div>
+
+            <div id="module-content" class="bg-white rounded-xl shadow-sm p-8 md:p-10">
+                <div id="content-placeholder" class="text-center text-stone-500 py-16">
+                    <p class="text-xl">Sélectionnez un module ci-dessus pour afficher le programme détaillé.</p>
+                </div>
+
+                <div id="content-web" class="content-section">
+                    <h2 class="text-3xl font-bold text-blue-600 mb-6">Module 1 : Développement Web Fondamental</h2>
+                    <p class="text-lg text-stone-600 mb-8">Ce module est votre porte d'entrée dans le monde du développement web. Vous apprendrez à construire l'ossature et l'apparence de n'importe quelle application, en partant de zéro pour arriver à une interface utilisateur fonctionnelle.</p>
+                    <div class="space-y-6">
+                        <div class="task-item">
+                            <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-stone-800 font-medium text-lg">Mettre en place un environnement de développement web (HTML, CSS, JavaScript).</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Installation de VS Code, Node.js, et configuration d'un serveur de développement local.</p>
+                        </div>
+                        <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-stone-800 font-medium text-lg">Structurer une page avec HTML5 sémantique.</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Utilisation des balises comme `<header>`, `<main>`, `<section>`, `<article>` pour une meilleure accessibilité et SEO.</p>
+                        </div>
+                        <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-stone-800 font-medium text-lg">Styliser des composants avec CSS et un framework (Tailwind CSS).</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Apprentissage du responsive design, du modèle de boîte, de Flexbox et Grid.</p>
+                        </div>
+                        <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-stone-800 font-medium text-lg">Ajouter de l'interactivité avec JavaScript moderne (ES6+).</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Manipulation du DOM, gestion des événements, et utilisation des requêtes `fetch` pour communiquer avec des APIs.</p>
+                        </div>
+                        <div class="mt-8 pt-6 border-t">
+                            <h4 class="font-bold text-stone-700">Projet Pratique :</h4>
+                            <p class="text-stone-600">Création d'une page de portfolio interactive monopage.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="content-data" class="content-section">
+                    <h2 class="text-3xl font-bold text-green-600 mb-6">Module 2 : Gestion des Données Simples</h2>
+                     <p class="text-lg text-stone-600 mb-8">Les données sont le carburant des applications d'IA. Ce module vous apprend à parler le langage des bases de données relationnelles, SQL, pour lire, filtrer et extraire précisément les informations dont vous avez besoin.</p>
+                    <div class="space-y-6">
+                         <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                <span class="text-stone-800 font-medium text-lg">Comprendre les concepts de base de données relationnelles.</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Tables, colonnes, clés primaires et étrangères, relations.</p>
+                        </div>
+                         <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                <span class="text-stone-800 font-medium text-lg">Écrire des requêtes `SELECT` pour extraire des données.</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Utilisation de `FROM`, `WHERE` pour filtrer, `ORDER BY` pour trier.</p>
+                        </div>
+                         <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                <span class="text-stone-800 font-medium text-lg">Effectuer des jointures simples (`INNER JOIN`) pour combiner des tables.</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Associer des données provenant de plusieurs tables pour des requêtes complexes.</p>
+                        </div>
+                         <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                <span class="text-stone-800 font-medium text-lg">Intégrer une requête SQL dans une application (ex: avec Node.js).</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Se connecter à une base de données (SQLite) et exécuter des requêtes depuis le code.</p>
+                        </div>
+                        <div class="mt-8 pt-6 border-t">
+                            <h4 class="font-bold text-stone-700">Projet Pratique :</h4>
+                            <p class="text-stone-600">Développement d'un script qui extrait et affiche la liste des utilisateurs et leurs derniers commentaires depuis une base de données fournie.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="content-version" class="content-section">
+                    <h2 class="text-3xl font-bold text-purple-600 mb-6">Module 3 : Gestion de Version du Code</h2>
+                    <p class="text-lg text-stone-600 mb-8">Un code non versionné est un code à risque. Apprenez à utiliser Git, l'outil standard de l'industrie, pour sauvegarder l'historique de votre projet, collaborer avec d'autres et automatiser les vérifications de qualité.</p>
+                     <div class="space-y-6">
+                        <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                                <span class="text-stone-800 font-medium text-lg">Initialiser un dépôt Git local et effectuer des commits.</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Commandes `git init`, `git add`, `git commit`.</p>
+                        </div>
+                         <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                                <span class="text-stone-800 font-medium text-lg">Créer et lier un dépôt distant (GitHub, GitLab).</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Commandes `git remote add`, `git push`.</p>
+                        </div>
+                         <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                                <span class="text-stone-800 font-medium text-lg">Comprendre le flux de travail de base avec les branches.</span>
+                            </label>
+                             <p class="ml-8 text-stone-500">Commandes `git branch`, `git checkout`, `git merge`.</p>
+                        </div>
+                         <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                                <span class="text-stone-800 font-medium text-lg">Introduction à l'Intégration Continue (CI).</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Concept de l'automatisation des tests (linting, unit tests) à chaque `push` via les GitHub Actions.</p>
+                        </div>
+                        <div class="mt-8 pt-6 border-t">
+                             <h4 class="font-bold text-stone-700">Projet Pratique :</h4>
+                            <p class="text-stone-600">Versionner le code du projet "portfolio", le pousser sur GitHub et configurer une action simple qui vérifie la qualité du code à chaque modification.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="content-ai" class="content-section">
+                    <h2 class="text-3xl font-bold text-yellow-600 mb-6">Module 4 : Concepts Initiaux de l'IA</h2>
+                    <p class="text-lg text-stone-600 mb-8">C'est ici que le web et l'IA se rencontrent. Ce module d'introduction vous montrera comment consommer des modèles d'IA pré-entraînés via des APIs pour ajouter des fonctionnalités intelligentes à vos applications sans être un expert en machine learning.</p>
+                     <div class="space-y-6">
+                        <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500">
+                                <span class="text-stone-800 font-medium text-lg">Comprendre les différents types d'IA (générative, prédictive...).</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Introduction aux grands concepts : LLMs, reconnaissance d'image, etc.</p>
+                        </div>
+                         <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500">
+                                <span class="text-stone-800 font-medium text-lg">Le rôle des APIs dans l'intégration de l'IA.</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Comment les applications web communiquent avec des services d'IA distants.</p>
+                        </div>
+                         <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500">
+                                <span class="text-stone-800 font-medium text-lg">Intégrer une bibliothèque cliente pour une API d'IA (ex: OpenAI, Gemini).</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Utiliser `fetch` ou des SDKs pour envoyer des requêtes et recevoir des réponses d'un modèle d'IA.</p>
+                        </div>
+                         <div class="task-item">
+                             <label class="flex items-center space-x-3">
+                                <input type="checkbox" class="h-5 w-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500">
+                                <span class="text-stone-800 font-medium text-lg">Gérer les clés d'API et la sécurité de base.</span>
+                            </label>
+                            <p class="ml-8 text-stone-500">Bonnes pratiques pour ne pas exposer ses clés secrètes côté client.</p>
+                        </div>
+                        <div class="mt-8 pt-6 border-t">
+                            <h4 class="font-bold text-stone-700">Projet Pratique :</h4>
+                            <p class="text-stone-600">Ajouter une fonctionnalité à la page portfolio qui utilise une IA générative pour créer une bio de présentation à partir de quelques mots-clés entrés par l'utilisateur.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <footer class="text-center mt-16 text-stone-500">
+            <p>&copy; 2025 Parcours Pédagogique IA. Tous droits réservés.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartCtx = document.getElementById('courseStructureChart').getContext('2d');
+            const courseData = {
+                labels: ['Développement Web', 'Concepts de l\'IA', 'Gestion des Données', 'Gestion de Version'],
+                datasets: [{
+                    label: 'Répartition de la Formation',
+                    data: [40, 25, 20, 15],
+                    backgroundColor: [
+                        '#3B82F6', 
+                        '#F59E0B',
+                        '#10B981',
+                        '#8B5CF6'
+                    ],
+                    borderColor: '#F5F5F4',
+                    borderWidth: 4,
+                    hoverOffset: 10
+                }]
+            };
+
+            new Chart(chartCtx, {
+                type: 'doughnut',
+                data: courseData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 12,
+                                    family: "'Inter', sans-serif"
+                                },
+                                color: '#1C1917',
+                                padding: 15,
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            const moduleCards = document.querySelectorAll('.module-card');
+            const contentSections = document.querySelectorAll('.content-section');
+            const placeholder = document.getElementById('content-placeholder');
+            const moduleContentContainer = document.getElementById('module-content');
+
+            moduleCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const selectedModule = card.dataset.module;
+
+                    moduleCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    
+                    if (placeholder) {
+                        placeholder.style.display = 'none';
+                    }
+
+                    contentSections.forEach(section => {
+                        if (section.id === `content-${selectedModule}`) {
+                            section.classList.add('active');
+                        } else {
+                            section.classList.remove('active');
+                        }
+                    });
+                    
+                    moduleContentContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
