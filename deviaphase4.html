@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours MLOps : Optimisation et Opérationnalisation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals with Tech Accents -->
+    <!-- Application Structure Plan: The application is structured as a single-page interactive textbook. A fixed sidebar navigation allows users to jump between the four core modules of the MLOps course. This structure was chosen for its clarity and alignment with a typical learning path, allowing users to focus on one major topic at a time while easily referencing others. The core of the experience is an interactive MLOps lifecycle diagram on the homepage, which acts as a visual table of contents, linking abstract concepts to a concrete workflow. This user flow encourages exploration from both a high-level (the lifecycle diagram) and a detailed, topic-specific level (the sidebar navigation), catering to different learning styles and enhancing comprehension of how these complex processes interconnect. -->
+    <!-- Visualization & Content Choices: 
+        - MLOps Lifecycle (Report Info) -> Organize & Relate (Goal) -> Interactive Diagram (HTML/CSS) (Viz) -> Click stages to show details (Interaction) -> Visually grounds the entire course in the central MLOps loop, making the abstract concepts tangible.
+        - CI/CD Pipeline (Report Info) -> Show Process (Goal) -> Horizontal Flow Diagram (HTML/CSS) (Viz) -> Hover/Click stages (Interaction) -> Clearly illustrates the sequence of operations in continuous delivery, a core concept.
+        - Monitoring Metrics (Report Info) -> Inform & Show Change (Goal) -> Line & Bar Charts (Canvas/Chart.js) (Viz) -> Buttons to simulate updates (Interaction) -> Provides a practical, visual example of model monitoring dashboards, making the idea of "drift" and "latency" concrete.
+        - Detailed Topics (Report Info) -> Inform & Organize (Goal) -> Clickable Cards/Tabs (HTML) (Viz) -> Click to expand/reveal content (Interaction) -> Prevents cognitive overload by breaking down dense information into manageable, user-driven chunks, improving learning retention. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+        .nav-link:hover {
+            background-color: #eef2ff;
+        }
+        .diagram-node {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .diagram-node:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="flex h-screen bg-gray-100">
+        <aside class="w-64 bg-white shadow-md flex-shrink-0">
+            <div class="p-6">
+                <h1 class="text-xl font-bold text-indigo-600">Cours MLOps</h1>
+                <p class="text-sm text-gray-500 mt-1">Phase 4 : Opérationnalisation</p>
+            </div>
+            <nav class="mt-2">
+                <a href="#overview" class="nav-link flex items-center py-3 px-6 text-gray-600">
+                    <span class="mr-3">🏠</span> Vue d'ensemble
+                </a>
+                <a href="#env" class="nav-link flex items-center py-3 px-6 text-gray-600">
+                    <span class="mr-3">🛠️</span> Environnement MLOps
+                </a>
+                <a href="#cicd" class="nav-link flex items-center py-3 px-6 text-gray-600">
+                    <span class="mr-3">🔄</span> Intégration Continue (CI/CD)
+                </a>
+                <a href="#tests" class="nav-link flex items-center py-3 px-6 text-gray-600">
+                    <span class="mr-3">🧪</span> Tests et Surveillance
+                </a>
+                <a href="#incidents" class="nav-link flex items-center py-3 px-6 text-gray-600">
+                    <span class="mr-3">🔥</span> Résolution d'Incidents
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto p-6 md:p-10">
+            <div id="overview" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">Phase 4 : Optimisation et Opérationnalisation (MLOps)</h2>
+                <p class="mb-8 text-gray-600 max-w-3xl">Bienvenue dans la phase finale de votre parcours en IA. Ici, nous allons transformer des modèles d'IA expérimentaux en systèmes robustes, fiables et évolutifs en production. Vous apprendrez les principes de l'ingénierie MLOps et DevOps pour automatiser, optimiser et maintenir des applications d'IA à grande échelle. Explorez le cycle de vie ci-dessous pour comprendre comment les différentes étapes s'articulent.</p>
+                
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-center mb-6">Le Cycle de Vie MLOps</h3>
+                    <div class="relative flex flex-col items-center">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-center">
+                            <div class="diagram-node bg-blue-50 p-4 rounded-lg border border-blue-200" onclick="showSection('env')">
+                                <p class="text-2xl">📈</p>
+                                <h4 class="font-semibold mt-2">1. Gestion des Données</h4>
+                                <p class="text-xs text-gray-500">Collecte, validation et versionnement des données.</p>
+                            </div>
+                            <div class="diagram-node bg-green-50 p-4 rounded-lg border border-green-200" onclick="showSection('env')">
+                                <p class="text-2xl">🤖</p>
+                                <h4 class="font-semibold mt-2">2. Développement du Modèle</h4>
+                                <p class="text-xs text-gray-500">Entraînement, évaluation et versionnement des modèles.</p>
+                            </div>
+                            <div class="diagram-node bg-purple-50 p-4 rounded-lg border border-purple-200" onclick="showSection('cicd')">
+                                <p class="text-2xl">📦</p>
+                                <h4 class="font-semibold mt-2">3. CI/CD pour le ML</h4>
+                                <p class="text-xs text-gray-500">Intégration et livraison continues des modèles et applications.</p>
+                            </div>
+                        </div>
+                        <div class="my-4 h-12 flex items-center text-gray-400">
+                            <span class="text-4xl">↓</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full md:w-2/3 text-center">
+                             <div class="diagram-node bg-yellow-50 p-4 rounded-lg border border-yellow-200" onclick="showSection('tests')">
+                                <p class="text-2xl">📊</p>
+                                <h4 class="font-semibold mt-2">4. Déploiement & Surveillance</h4>
+                                <p class="text-xs text-gray-500">Mise en production, monitoring des performances et de la dérive.</p>
+                            </div>
+                             <div class="diagram-node bg-red-50 p-4 rounded-lg border border-red-200" onclick="showSection('incidents')">
+                                <p class="text-2xl">🚨</p>
+                                <h4 class="font-semibold mt-2">5. Opérations & Feedback</h4>
+                                <p class="text-xs text-gray-500">Gestion des incidents et boucle de rétroaction pour l'amélioration continue.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="env" class="content-section">
+                <h2 class="text-3xl font-bold mb-2">Environnement DevOps et MLOps</h2>
+                <p class="mb-8 text-gray-600">Cette section introduit les fondations du MLOps. Vous découvrirez comment structurer un projet d'IA, optimiser son code source et utiliser des pipelines pour automatiser les processus, de la gestion des données à l'entraînement du modèle.</p>
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg">Prise en main de l'environnement</h3>
+                        <p class="text-gray-600 mt-2">L'environnement MLOps intègre des outils de DevOps (comme Git, Docker, Kubernetes) avec des plateformes de Machine Learning (comme Kubeflow, MLflow, Sagemaker). L'objectif est de créer un cadre de travail reproductible, versionné et collaboratif.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg">Optimisation via des pipelines MLOps</h3>
+                        <p class="text-gray-600 mt-2">Un pipeline MLOps est une série d'étapes automatisées qui gèrent le cycle de vie d'un modèle. Il inclut typiquement :</p>
+                        <ul class="list-disc list-inside mt-2 text-gray-600 space-y-1">
+                            <li><strong>Ingestion et validation des données :</strong> Automatiser la collecte et la vérification de la qualité des données.</li>
+                            <li><strong>Entraînement du modèle :</strong> Lancer les jobs d'entraînement de manière reproductible.</li>
+                            <li><strong>Évaluation du modèle :</strong> Mesurer la performance par rapport à des métriques définies.</li>
+                            <li><strong>Enregistrement du modèle :</strong> Versionner et stocker le modèle entraîné dans un registre.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg">Optimisation des sources d'une application d'IA</h3>
+                        <p class="text-gray-600 mt-2">L'optimisation du code est cruciale pour la performance et la maintenabilité. Cela comprend :</p>
+                         <ul class="list-disc list-inside mt-2 text-gray-600 space-y-1">
+                            <li><strong>Modularité :</strong> Séparer le code de préparation des données, d'entraînement et d'inférence.</li>
+                            <li><strong>Gestion des dépendances :</strong> Utiliser des outils comme `pip` avec `requirements.txt` ou `Poetry` pour des environnements reproductibles.</li>
+                            <li><strong>Conteneurisation :</strong> Utiliser Docker pour packager l'application et ses dépendances, garantissant une exécution cohérente partout.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="cicd" class="content-section">
+                <h2 class="text-3xl font-bold mb-2">Intégration et Livraison Continues (CI/CD)</h2>
+                <p class="mb-8 text-gray-600">L'automatisation est au cœur du MLOps. Ici, nous explorons comment mettre en place des pipelines CI/CD pour intégrer, tester et déployer en continu non seulement le code de l'application, mais aussi les modèles d'IA eux-mêmes, de manière fiable et rapide.</p>
+                
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-center mb-6">Anatomie d'un Pipeline CI/CD pour l'IA</h3>
+                    <div class="flex items-center justify-center space-x-2 md:space-x-4 overflow-x-auto p-4">
+                        <div class="text-center flex-shrink-0">
+                            <div class="bg-gray-200 rounded-full h-16 w-16 flex items-center justify-center mx-auto shadow-inner">💻</div>
+                            <p class="font-semibold mt-2 text-sm">Commit</p>
+                        </div>
+                        <div class="text-gray-300 font-bold text-2xl">→</div>
+                        <div class="text-center flex-shrink-0">
+                            <div class="bg-indigo-100 text-indigo-600 rounded-full h-16 w-16 flex items-center justify-center mx-auto shadow-inner">🛠️</div>
+                            <p class="font-semibold mt-2 text-sm">Build & Test<br>(Application)</p>
+                        </div>
+                        <div class="text-gray-300 font-bold text-2xl">→</div>
+                        <div class="text-center flex-shrink-0">
+                            <div class="bg-blue-100 text-blue-600 rounded-full h-16 w-16 flex items-center justify-center mx-auto shadow-inner">🤖</div>
+                            <p class="font-semibold mt-2 text-sm">Build & Test<br>(Modèle)</p>
+                        </div>
+                        <div class="text-gray-300 font-bold text-2xl">→</div>
+                        <div class="text-center flex-shrink-0">
+                            <div class="bg-green-100 text-green-600 rounded-full h-16 w-16 flex items-center justify-center mx-auto shadow-inner">🚀</div>
+                            <p class="font-semibold mt-2 text-sm">Déploiement</p>
+                        </div>
+                        <div class="text-gray-300 font-bold text-2xl">→</div>
+                        <div class="text-center flex-shrink-0">
+                            <div class="bg-yellow-100 text-yellow-600 rounded-full h-16 w-16 flex items-center justify-center mx-auto shadow-inner">📈</div>
+                            <p class="font-semibold mt-2 text-sm">Monitoring</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 grid md:grid-cols-2 gap-6">
+                     <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg">Chaîne de livraison continue d'un modèle d'IA (CD4ML)</h3>
+                        <p class="text-gray-600 mt-2">Le Continuous Delivery for Machine Learning (CD4ML) est un pipeline spécifique qui automatise le ré-entraînement et le déploiement des modèles. Un déclencheur (ex: nouvelles données, performance en baisse) lance un pipeline qui :</p>
+                        <ol class="list-decimal list-inside mt-2 text-gray-600">
+                            <li>Ré-entraîne le modèle sur les nouvelles données.</li>
+                            <li>Évalue le nouveau modèle contre le modèle en production.</li>
+                            <li>Si le nouveau modèle est meilleur, le déploie automatiquement (ex: déploiement canary).</li>
+                        </ol>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg">Processus de livraison continue d'une application</h3>
+                        <p class="text-gray-600 mt-2">C'est le pipeline CI/CD classique appliqué à l'application qui sert le modèle (ex: une API Flask). À chaque modification du code :</p>
+                        <ul class="list-disc list-inside mt-2 text-gray-600">
+                            <li>Le code est testé (tests unitaires, d'intégration).</li>
+                            <li>Une image Docker est construite.</li>
+                            <li>L'image est déployée sur un environnement de staging, puis en production.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="tests" class="content-section">
+                <h2 class="text-3xl font-bold mb-2">Tests et Surveillance</h2>
+                <p class="mb-8 text-gray-600">Un modèle déployé n'est pas la fin du voyage. Il faut s'assurer qu'il fonctionne correctement et que ses performances ne se dégradent pas. Cette section couvre l'automatisation des tests (pour le code et le modèle) et la mise en place d'un monitoring efficace.</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg mb-4">Automatisation des Tests</h3>
+                        <p class="text-gray-600 mb-4">Les tests automatisés sont essentiels pour la CI/CD. Ils se divisent en deux catégories :</p>
+                        <ul class="space-y-3">
+                            <li>
+                                <strong class="text-indigo-600">Tests du code source :</strong>
+                                <ul class="list-disc list-inside text-gray-600 ml-4">
+                                    <li><strong>Tests unitaires :</strong> Vérifient de petites portions de code (fonctions) de manière isolée.</li>
+                                    <li><strong>Tests d'intégration :</strong> Vérifient que différents modules fonctionnent bien ensemble.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <strong class="text-indigo-600">Tests du modèle d'IA :</strong>
+                                <ul class="list-disc list-inside text-gray-600 ml-4">
+                                    <li><strong>Validation des données :</strong> S'assurer que les données d'entrée ont le bon format/schéma.</li>
+                                    <li><strong>Performance du modèle :</strong> Vérifier que le modèle atteint un seuil de performance minimum sur un jeu de test.</li>
+                                    <li><strong>Tests comportementaux :</strong> Tester la robustesse du modèle face à des données bruitées ou des cas extrêmes.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg mb-4">Monitoring d'un Modèle en Production</h3>
+                        <p class="text-gray-600 mb-4">Le monitoring consiste à suivre en continu les performances de l'application et du modèle. On surveille principalement :</p>
+                        <ul class="space-y-3">
+                            <li>
+                                <strong class="text-indigo-600">Métriques Opérationnelles :</strong>
+                                <ul class="list-disc list-inside text-gray-600 ml-4">
+                                    <li>Latence (temps de réponse des prédictions).</li>
+                                    <li>Taux d'erreur (ex: erreurs 500 de l'API).</li>
+                                    <li>Utilisation des ressources (CPU, RAM).</li>
+                                </ul>
+                            </li>
+                             <li>
+                                <strong class="text-indigo-600">Métriques de Performance du Modèle :</strong>
+                                <ul class="list-disc list-inside text-gray-600 ml-4">
+                                    <li><strong>Dérive des données (Data Drift) :</strong> La distribution des données en production change-t-elle par rapport aux données d'entraînement ?</li>
+                                    <li><strong>Dérive du concept (Concept Drift) :</strong> La relation entre les entrées et la sortie a-t-elle changé ?</li>
+                                    <li><strong>Qualité des prédictions :</strong> Si possible, comparer les prédictions aux résultats réels (ex: accuracy, F1-score).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-8 bg-white p-6 rounded-lg shadow">
+                    <h3 class="font-semibold text-lg mb-4 text-center">Exemple de Tableau de Bord de Monitoring</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="chart-container">
+                             <canvas id="driftChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                             <canvas id="latencyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="incidents" class="content-section">
+                <h2 class="text-3xl font-bold mb-2">Résolution d'Incidents et Intégration</h2>
+                <p class="mb-8 text-gray-600">Même avec les meilleurs pipelines et monitoring, des problèmes surviendront. Cette dernière section aborde la manière de diagnostiquer et résoudre les incidents techniques, et comment intégrer efficacement des modèles d'IA dans des applications plus larges.</p>
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg">Résoudre les incidents techniques</h3>
+                        <p class="text-gray-600 mt-2">Une approche structurée est nécessaire pour gérer les incidents :</p>
+                        <ol class="list-decimal list-inside mt-2 text-gray-600 space-y-2">
+                            <li><strong>Détection :</strong> L'incident est détecté via les alertes du système de monitoring (ex: latence élevée, chute de performance).</li>
+                            <li><strong>Diagnostic :</strong> Utiliser les logs, les traces et les métriques pour identifier la cause racine. Est-ce un bug dans le code ? Un problème d'infrastructure ? Une dérive des données ?</li>
+                            <li><strong>Correction :</strong> Appliquer un correctif. Cela peut être un rollback vers une version précédente, un redémarrage de service, ou un patch de code urgent.</li>
+                            <li><strong>Post-mortem :</strong> Analyser l'incident pour comprendre pourquoi il s'est produit et mettre en place des mesures pour éviter qu'il ne se reproduise.</li>
+                        </ol>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="font-semibold text-lg">Intégrer des modèles et des services d’intelligence artificielle</h3>
+                        <p class="text-gray-600 mt-2">L'intégration est l'art de faire communiquer le modèle avec le reste du monde. Les approches courantes sont :</p>
+                         <ul class="list-disc list-inside mt-2 text-gray-600 space-y-2">
+                            <li><strong>Exposition via une API REST :</strong> La méthode la plus commune. Le modèle est encapsulé dans un service web (ex: Flask, FastAPI) qui expose un endpoint pour les prédictions.</li>
+                            <li><strong>Inférence en batch :</strong> Pour les cas d'usage non-temps réel, un processus batch exécute le modèle sur un grand volume de données à intervalles réguliers.</li>
+                            <li><strong>Inférence en streaming :</strong> Le modèle traite les données en temps réel à mesure qu'elles arrivent via un flux (ex: Kafka, Kinesis).</li>
+                             <li><strong>Déploiement sur l'appareil (Edge) :</strong> Le modèle est exécuté directement sur l'appareil de l'utilisateur (mobile, IoT), réduisant la latence et les besoins en connectivité.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+<script>
+    const navLinks = document.querySelectorAll('.nav-link');
+    const contentSections = document.querySelectorAll('.content-section');
+    let driftChart, latencyChart;
+
+    function showSection(id) {
+        contentSections.forEach(section => {
+            section.classList.remove('active');
+            if (section.id === id) {
+                section.classList.add('active');
+            }
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${id}`) {
+                link.classList.add('active');
+            }
+        });
+        
+        if (id === 'tests' && !driftChart) {
+            initCharts();
+        }
+    }
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = e.currentTarget.getAttribute('href').substring(1);
+            showSection(targetId);
+            window.history.pushState({}, '', `#${targetId}`);
+        });
+    });
+
+    window.addEventListener('popstate', () => {
+        const hash = window.location.hash.substring(1) || 'overview';
+        showSection(hash);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const initialHash = window.location.hash.substring(1) || 'overview';
+        showSection(initialHash);
+    });
+    
+    function initCharts() {
+        const driftCtx = document.getElementById('driftChart').getContext('2d');
+        const latencyCtx = document.getElementById('latencyChart').getContext('2d');
+
+        const initialDriftData = {
+            labels: ['Semaine 1', 'Semaine 2', 'Semaine 3', 'Semaine 4', 'Semaine 5', 'Semaine 6'],
+            datasets: [{
+                label: 'Score de dérive des données',
+                data: [0.05, 0.06, 0.08, 0.15, 0.14, 0.22],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                tension: 0.3,
+                fill: true,
+            }]
+        };
+
+        const initialLatencyData = {
+            labels: ['Modèle v1', 'Modèle v1.1', 'Modèle v2'],
+            datasets: [{
+                label: 'Latence de prédiction (ms)',
+                data: [120, 110, 85],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)'
+                ],
+                borderColor: [
+                    'rgb(54, 162, 235)',
+                    'rgb(75, 192, 192)',
+                    'rgb(153, 102, 255)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const chartOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    font: {
+                        size: 16
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        };
+
+        driftChart = new Chart(driftCtx, {
+            type: 'line',
+            data: initialDriftData,
+            options: { ...chartOptions, plugins: { ...chartOptions.plugins, title: { ...chartOptions.plugins.title, text: 'Suivi de la Dérive des Données' }}}
+        });
+
+        latencyChart = new Chart(latencyCtx, {
+            type: 'bar',
+            data: initialLatencyData,
+            options: { ...chartOptions, plugins: { ...chartOptions.plugins, title: { ...chartOptions.plugins.title, text: 'Latence par Version de Modèle' }}}
+        });
+    }
+</script>
+
+</body>
+</html>
