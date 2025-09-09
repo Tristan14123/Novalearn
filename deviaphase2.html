@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours IA - Phase 2: Exploitation et Intégration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application is structured as a single-page course with a fixed left-hand navigation sidebar. This allows learners to easily navigate between modules in a non-linear fashion, providing a clear overview of the course content at all times. The main content area dynamically displays the selected module. This structure was chosen for its pedagogical clarity, breaking down a complex topic into digestible, self-contained sections. The flow progresses logically from strategic thinking (Veille, Analyse) to practical application (Intégration, Conception) and finally to operational concerns (Sécurité, Documentation), culminating in a case study that synthesizes all concepts. User interaction is embedded in each module (simulators, quizzes, interactive diagrams) to reinforce learning through active engagement rather than passive reading. -->
+    <!-- Visualization & Content Choices: 
+        - Module 1 (Veille): Goal: Organize/Inform -> Presentation: HTML/CSS diagram and info cards -> Interaction: Checklist -> Justification: Visually represents the cyclical process of tech watch and provides actionable resources.
+        - Module 2 (Analyse): Goal: Compare/Decide -> Presentation: Interactive HTML/CSS flowchart and comparison table -> Interaction: "Service Selector" simulator -> Justification: Guides the user through the critical decision-making process in a hands-on, simulated environment.
+        - Module 3 (Intégration): Goal: Demonstrate/Practice -> Presentation: Styled code blocks and HTML/CSS architecture diagram -> Interaction: Live code sandbox for API calls -> Justification: Bridges the gap between theory and practice by providing concrete code examples and a safe space to experiment.
+        - Module 4 (Conception): Goal: Inform/Structure -> Presentation: Document templates and architecture diagram (HTML/CSS) -> Interaction: Documentation snippet generator -> Justification: Provides practical, reusable templates for professional documentation.
+        - Module 5 (Sécurité): Goal: Inform/Assess -> Presentation: Info cards for risks and best practices -> Interaction: Mini-quiz with feedback -> Justification: Highlights crucial security and accessibility issues often overlooked, using an interactive quiz to test understanding.
+        - Case Study: Goal: Synthesize/Apply -> Presentation: Step-by-step project walkthrough -> Viz: Doughnut Chart (Chart.js) for cost analysis -> Justification: The chart provides a quantitative, real-world metric (cost) to consider, grounding the entire course in a practical business context.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #3f3c3a;
+        }
+        .sidebar-link {
+            transition: all 0.2s ease-in-out;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-link.active {
+            background-color: #F5F1EC;
+            color: #A47551;
+            border-left-color: #A47551;
+        }
+        .sidebar-link:hover {
+            background-color: #F5F1EC;
+            transform: translateX(2px);
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #EAE6E1;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+        .code-block {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: monospace;
+        }
+        .btn {
+            background-color: #A47551;
+            color: #FFFFFF;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #8c634e;
+        }
+        .interactive-element {
+            border: 2px dashed #D1C5B9;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 1.5rem;
+            background-color: #FDFBF8;
+        }
+    </style>
+</head>
+<body class="flex h-screen">
+
+    <aside class="w-64 bg-white border-r border-gray-200/80 p-5 hidden md:block flex-shrink-0">
+        <h1 class="text-xl font-bold text-[#A47551] mb-8">Cours IA : Phase 2</h1>
+        <nav id="sidebar-nav" class="space-y-2">
+            <a href="#accueil" class="sidebar-link block p-3 rounded-lg font-medium text-gray-700">Accueil</a>
+            <a href="#veille" class="sidebar-link block p-3 rounded-lg font-medium text-gray-700">1. Veille Stratégique</a>
+            <a href="#analyse" class="sidebar-link block p-3 rounded-lg font-medium text-gray-700">2. Analyse & Préconisation</a>
+            <a href="#integration" class="sidebar-link block p-3 rounded-lg font-medium text-gray-700">3. Intégration d'APIs</a>
+            <a href="#conception" class="sidebar-link block p-3 rounded-lg font-medium text-gray-700">4. Conception & Doc</a>
+            <a href="#securite" class="sidebar-link block p-3 rounded-lg font-medium text-gray-700">5. Sécurité & Accessibilité</a>
+            <a href="#etude-de-cas" class="sidebar-link block p-3 rounded-lg font-medium text-gray-700">Étude de cas</a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-6 sm:p-10">
+        <div id="content" class="max-w-4xl mx-auto">
+            
+        </div>
+    </main>
+    
+<script>
+const contentDiv = document.getElementById('content');
+const navLinks = document.querySelectorAll('#sidebar-nav a');
+
+const content = {
+    accueil: `
+        <div class="card p-8">
+            <h2 class="text-3xl font-bold text-[#A47551] mb-4">Phase 2 : Exploitation et Intégration de Services d'IA</h2>
+            <p class="text-lg text-gray-600 mb-6">Bienvenue dans ce cours interactif ! Après avoir exploré les fondations de l'IA, nous allons maintenant passer à la pratique. L'objectif de cette phase est de vous rendre capable non pas de créer des modèles d'IA à partir de zéro, mais d'utiliser intelligemment les services existants pour construire des applications puissantes et innovantes.</p>
+            <p class="mb-4">Nous n'avons plus besoin d'être un chercheur du MIT pour intégrer de l'IA. Les géants de la tech (Google, Amazon, Microsoft, OpenAI...) proposent des "briques" d'IA prêtes à l'emploi, accessibles via des APIs. Notre rôle de développeur évolue : nous devenons des architectes, des intégrateurs qui assemblent ces services pour répondre à des besoins métiers concrets.</p>
+            <div class="bg-[#F5F1EC] p-6 rounded-lg mt-6">
+                <h3 class="font-bold text-lg mb-2 text-[#A47551]">Les compétences que vous allez acquérir :</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Identifier</strong> les bons services d'IA pour un projet donné.</li>
+                    <li><strong>Analyser</strong> un besoin client et le traduire en solution technique.</li>
+                    <li><strong>Intégrer</strong> des APIs d'IA dans des applications web.</li>
+                    <li><strong>Concevoir</strong> l'architecture d'une application enrichie par l'IA.</li>
+                    <li><strong>Documenter, sécuriser</strong> et assurer l'<strong>accessibilité</strong> de vos solutions.</li>
+                </ul>
+            </div>
+            <p class="mt-6 text-sm text-gray-500 italic">Utilisez le menu sur la gauche pour naviguer à travers les modules du cours.</p>
+        </div>
+    `,
+    veille: `
+        <div class="card p-8">
+            <h2 class="text-3xl font-bold text-[#A47551] mb-4">Module 1 : Veille Technologique et Réglementaire</h2>
+            <p class="text-lg text-gray-600 mb-6">Le monde de l'IA évolue à une vitesse fulgurante. Un service qui était à la pointe hier peut être obsolète demain. Une veille constante n'est pas une option, c'est une nécessité. Elle vous permet de rester pertinent, de proposer les meilleures solutions et de comprendre les contraintes légales émergentes.</p>
+            
+            <h3 class="text-2xl font-semibold mb-3 mt-8">Le Cycle de la Veille</h3>
+            <p class="mb-4">Une veille efficace est un processus structuré, pas une simple lecture d'articles au hasard. On peut le décomposer en quatre étapes clés :</p>
+            <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4 text-center">
+                <div class="p-4 bg-[#F5F1EC] rounded-lg w-full md:w-1/4"><strong class="text-[#A47551]">1. Identifier</strong><br>Définir les sources pertinentes</div>
+                <div class="font-bold text-2xl text-[#A47551]">&rarr;</div>
+                <div class="p-4 bg-[#F5F1EC] rounded-lg w-full md:w-1/4"><strong class="text-[#A47551]">2. Collecter</strong><br>Agréger l'information</div>
+                <div class="font-bold text-2xl text-[#A47551]">&rarr;</div>
+                <div class="p-4 bg-[#F5F1EC] rounded-lg w-full md:w-1/4"><strong class="text-[#A47551]">3. Analyser</strong><br>Synthétiser et évaluer</div>
+                <div class="font-bold text-2xl text-[#A47551]">&rarr;</div>
+                <div class="p-4 bg-[#F5F1EC] rounded-lg w-full md:w-1/4"><strong class="text-[#A47551]">4. Diffuser</strong><br>Partager les connaissances</div>
+            </div>
+            
+            <h3 class="text-2xl font-semibold mb-3 mt-8">Où chercher l'information ?</h3>
+            <p class="mb-4">Diversifiez vos sources pour avoir une vision complète du marché et de la recherche.</p>
+            
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="card p-4">
+                    <h4 class="font-bold">Veille Technique</h4>
+                    <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                        <li>Blogs officiels des grands fournisseurs (AWS, Google AI, Azure, OpenAI).</li>
+                        <li>Sites d'actualités spécialisés (The Verge, TechCrunch AI).</li>
+                        <li>Newsletters (DeepLearning.AI, The Batch).</li>
+                        <li>Publications scientifiques (arXiv pour les pré-publications).</li>
+                        <li>Conférences majeures (NeurIPS, ICML).</li>
+                    </ul>
+                </div>
+                <div class="card p-4">
+                    <h4 class="font-bold">Veille Réglementaire</h4>
+                     <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                        <li>Organismes gouvernementaux (CNIL en France).</li>
+                        <li>Sites institutionnels de l'Union Européenne (pour l'IA Act).</li>
+                        <li>Cabinets d'avocats spécialisés en technologie.</li>
+                        <li>Associations professionnelles.</li>
+                    </ul>
+                </div>
+            </div>
+            
+             <div class="interactive-element">
+                <h4 class="text-lg font-semibold text-center mb-4">Mise en pratique : Bâtissez votre Trousse de Veille</h4>
+                <p class="text-center text-gray-600 mb-4">Cochez les outils que vous pourriez utiliser pour organiser votre veille :</p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+                    <label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[#A47551] focus:ring-[#A47551]"><span>Agrégateur de flux RSS (Feedly)</span></label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[#A47551] focus:ring-[#A47551]"><span>Alertes Google</span></label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[#A47551] focus:ring-[#A47551]"><span>Abonnements Newsletters</span></label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[#A47551] focus:ring-[#A47551]"><span>Réseaux sociaux (Twitter, LinkedIn)</span></label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[#A47551] focus:ring-[#A47551]"><span>Outil de bookmarking (Pocket)</span></label>
+                    <label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[#A47551] focus:ring-[#A47551]"><span>Base de connaissances (Notion)</span></label>
+                </div>
+            </div>
+        </div>
+    `,
+    analyse: `
+        <div class="card p-8">
+            <h2 class="text-3xl font-bold text-[#A47551] mb-4">Module 2 : Analyse et Préconisation de Services d'IA</h2>
+            <p class="text-lg text-gray-600 mb-6">Savoir ce qui existe est une chose. Choisir la bonne solution pour un problème précis en est une autre. Cette étape est cruciale : un mauvais choix technologique peut faire échouer un projet, même si l'idée de départ était excellente.</p>
+
+            <h3 class="text-2xl font-semibold mb-3 mt-8">Comprendre le Besoin : Le Dialogue avec le Commanditaire</h3>
+            <p class="mb-4">Avant toute chose, il faut parfaitement cerner le besoin. Posez les bonnes questions :</p>
+            <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6">
+                <li>Quel est l'<strong>objectif métier</strong> ? (ex: "Réduire le temps de réponse du support client de 20%")</li>
+                <li>Quelles sont les <strong>données disponibles</strong> ? Sont-elles structurées, non structurées ? Quelle est leur qualité ?</li>
+                <li>Quelles sont les <strong>contraintes</strong> ? (Budget, délai, infrastructure existante, compétences de l'équipe).</li>
+                <li>Quels sont les <strong>critères de succès</strong> ? Comment saura-t-on que l'IA a un impact positif ?</li>
+            </ul>
+
+            <h3 class="text-2xl font-semibold mb-3 mt-8">Le Processus de Sélection d'un Service d'IA</h3>
+            <p class="mb-4">Suivez un processus logique pour évaluer et choisir un service. Voici un arbre de décision simplifié :</p>
+            <div class="border-2 border-gray-200 rounded-lg p-4 space-y-4">
+                <div class="text-center p-3 bg-blue-100 rounded-md"><strong>Définition du besoin fonctionnel</strong><br><small>(ex: "Classifier des images de produits")</small></div>
+                <div class="text-center font-bold text-2xl text-gray-400">&darr;</div>
+                <div class="text-center p-3 bg-green-100 rounded-md"><strong>Recherche des services existants</strong><br><small>(ex: "Google Vision API, AWS Rekognition, Azure Computer Vision")</small></div>
+                <div class="text-center font-bold text-2xl text-gray-400">&darr;</div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div class="p-3 bg-yellow-100 rounded-md"><strong>Critère 1 : Performance</strong><br><small>Précision, latence</small></div>
+                    <div class="p-3 bg-yellow-100 rounded-md"><strong>Critère 2 : Coût</strong><br><small>Prix par appel, paliers</small></div>
+                    <div class="p-3 bg-yellow-100 rounded-md"><strong>Critère 3 : Intégration</strong><br><small>Qualité de la doc, SDK</small></div>
+                </div>
+                <div class="text-center font-bold text-2xl text-gray-400">&darr;</div>
+                <div class="text-center p-3 bg-purple-100 rounded-md"><strong>Analyse comparative & PoC (Proof of Concept)</strong><br><small>(Tester les 2 meilleurs candidats sur un jeu de données réel)</small></div>
+                 <div class="text-center font-bold text-2xl text-gray-400">&darr;</div>
+                <div class="text-center p-3 bg-red-100 rounded-md"><strong>Préconisation finale</strong><br><small>("Nous recommandons le service X pour raisons Y et Z")</small></div>
+            </div>
+
+            <div class="interactive-element">
+                <h4 class="text-lg font-semibold text-center mb-4">Simulateur : Choisissez votre service d'IA</h4>
+                <p class="text-center text-gray-600 mb-4">Votre client, une startup e-commerce, veut un chatbot pour son site afin de gérer les questions fréquentes.</p>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="prio" class="block text-sm font-medium text-gray-700">Quelle est la priorité n°1 ?</label>
+                        <select id="prio" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#A47551] focus:border-[#A47551] sm:text-sm rounded-md">
+                            <option value="cout">Le coût le plus bas possible</option>
+                            <option value="simplicite">La simplicité d'intégration</option>
+                            <option value="performance">La meilleure qualité de conversation</option>
+                        </select>
+                    </div>
+                     <div>
+                        <label for="custom" class="block text-sm font-medium text-gray-700">Le chatbot doit-il être personnalisable ?</label>
+                        <select id="custom" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#A47551] focus:border-[#A47551] sm:text-sm rounded-md">
+                            <option value="oui">Oui, avec nos propres données</option>
+                            <option value="non">Non, une base de connaissance standard suffit</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button id="recommendBtn" class="btn">Obtenir une préconisation</button>
+                </div>
+                <div id="recommendation" class="mt-4 p-4 bg-gray-100 rounded-lg text-center hidden"></div>
+            </div>
+        </div>
+    `,
+    integration: `
+        <div class="card p-8">
+            <h2 class="text-3xl font-bold text-[#A47551] mb-4">Module 3 : Intégration d'APIs d'IA</h2>
+            <p class="text-lg text-gray-600 mb-6">C'est le cœur du métier d'intégrateur. Une fois le service choisi, il faut le connecter à votre application. Heureusement, la plupart des services d'IA sont conçus pour être accessibles via des APIs REST, un standard du web.</p>
+
+            <h3 class="text-2xl font-semibold mb-3 mt-8">Anatomie d'un appel API d'IA</h3>
+            <p class="mb-4">Un appel API est une requête HTTP que votre application envoie au serveur du fournisseur d'IA. Elle contient généralement :</p>
+            <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6">
+                <li><strong>Endpoint :</strong> L'URL du service (ex: <code>https://api.openai.com/v1/chat/completions</code>).</li>
+                <li><strong>Méthode HTTP :</strong> Souvent <code>POST</code> pour envoyer des données à analyser.</li>
+                <li><strong>Headers :</strong> Des méta-informations, comme le type de contenu (<code>Content-Type: application/json</code>) et surtout l'authentification (votre clé API).</li>
+                <li><strong>Body (Corps) :</strong> Les données que vous envoyez, généralement au format JSON. C'est ici que vous mettrez le texte à traduire, l'image à analyser, etc.</li>
+            </ul>
+
+            <h3 class="text-2xl font-semibold mb-3 mt-8">Exemple : Intégrer une API d'analyse de sentiment</h3>
+            <p class="mb-4">Imaginons que nous voulons analyser le sentiment d'un commentaire utilisateur. Voici à quoi ressemblerait l'appel en JavaScript avec <code>fetch</code>.</p>
+            <div class="code-block">
+<pre><code>const API_KEY = "votre_cle_api_secrete";
+const API_URL = "https://api.fictional-ai.com/v1/sentiment";
+
+async function analyzeSentiment(text) {
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': \`Bearer \${API_KEY}\`
+    },
+    body: JSON.stringify({
+      'text': text,
+      'language': 'fr'
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(\`API error: \${response.status}\`);
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+// Utilisation
+analyzeSentiment("Ce produit est absolument incroyable !")
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
+
+// Réponse attendue de l'API :
+// { "sentiment": "positif", "score": 0.98 }
+</code></pre>
+            </div>
+             <p class="text-red-600 font-semibold mt-4">⚠️ Attention : Ne jamais mettre votre clé API directement dans le code frontend (côté client) ! Elle serait visible par tout le monde. Elle doit être gérée par un backend qui fera l'appel à l'API d'IA pour vous.</p>
+
+            <div class="interactive-element">
+                <h4 class="text-lg font-semibold text-center mb-4">Sandbox : Testez une fausse API d'analyse de sentiment</h4>
+                <p class="text-center text-gray-600 mb-4">Entrez une phrase et cliquez sur "Analyser" pour voir une réponse simulée.</p>
+                <textarea id="sentimentText" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: J'adore ce cours ! ou Ce service est décevant."></textarea>
+                <div class="text-center mt-4">
+                    <button id="sentimentBtn" class="btn">Analyser le sentiment</button>
+                </div>
+                <div class="mt-4">
+                    <h5 class="font-semibold">Réponse de l'API :</h5>
+                    <pre id="sentimentResult" class="code-block mt-2 text-sm h-24">{...}</pre>
+                </div>
+            </div>
+        </div>
+    `,
+    conception: `
+        <div class="card p-8">
+            <h2 class="text-3xl font-bold text-[#A47551] mb-4">Module 4 : Conception et Documentation</h2>
+            <p class="text-lg text-gray-600 mb-6">Une intégration réussie ne se résume pas à un appel API fonctionnel. Elle doit s'inscrire dans une architecture logicielle robuste et être accompagnée d'une documentation claire pour assurer sa maintenance et son évolution.</p>
+
+            <h3 class="text-2xl font-semibold mb-3 mt-8">Concevoir le Cadre Technique</h3>
+            <p class="mb-4">L'architecture la plus courante pour une application web intégrant un service d'IA est une architecture à 3 niveaux :</p>
+             <div class="border-2 border-gray-200 rounded-lg p-6 space-y-4 text-center">
+                <div class="p-4 bg-blue-100 rounded-lg"><strong>1. Frontend (Client)</strong><br><small>L'interface utilisateur (React, Vue, etc.). Ne contient aucune logique métier sensible ni clé API.</small></div>
+                <div class="font-bold text-2xl text-gray-400">&darr; &uarr;</div>
+                <div class="p-4 bg-green-100 rounded-lg"><strong>2. Backend (Votre Serveur)</strong><br><small>Une API que vous développez (Node.js, Python, etc.). Elle gère l'authentification, la logique métier et stocke de manière sécurisée la clé de l'API d'IA.</small></div>
+                <div class="font-bold text-2xl text-gray-400">&darr; &uarr;</div>
+                <div class="p-4 bg-purple-100 rounded-lg"><strong>3. Service d'IA Externe</strong><br><small>L'API du fournisseur (Google, OpenAI, etc.). Votre backend est le seul à communiquer avec elle.</small></div>
+            </div>
+            <p class="mt-4">Cette séparation est fondamentale pour la <strong>sécurité</strong> (les clés ne sont pas exposées) et la <strong>flexibilité</strong> (si vous changez de fournisseur d'IA, seul le backend est à modifier).</p>
+            
+            <h3 class="text-2xl font-semibold mb-3 mt-8">Rédiger une Documentation Technique</h3>
+            <p class="mb-4">Une bonne documentation est essentielle. Imaginez qu'un nouveau développeur rejoigne votre équipe. Il doit pouvoir comprendre le fonctionnement de l'intégration rapidement.</p>
+            
+            <h4 class="text-xl font-medium mb-2">Exemple de documentation pour un endpoint de votre backend</h4>
+            <div class="border rounded-lg p-4 bg-gray-50">
+                <h5 class="font-bold">Endpoint: <code>POST /api/summarize</code></h5>
+                <p class="text-sm text-gray-600 mb-2"><strong>Description:</strong> Prend un long texte en entrée et renvoie un résumé généré par le service d'IA externe.</p>
+                <h6 class="font-semibold mt-3">Corps de la requête (Request Body)</h6>
+                <div class="code-block text-sm mt-1">
+<pre><code>{
+  "textToSummarize": "string (min 100 characters)",
+  "outputLength": "short" | "medium" | "long" // optional, default "medium"
+}</code></pre>
+                </div>
+                <h6 class="font-semibold mt-3">Réponse en cas de succès (200 OK)</h6>
+                <div class="code-block text-sm mt-1">
+<pre><code>{
+  "summary": "string"
+}</code></pre>
+                </div>
+                 <h6 class="font-semibold mt-3">Réponse en cas d'erreur (400 Bad Request)</h6>
+                <div class="code-block text-sm mt-1">
+<pre><code>{
+  "error": "Text is too short."
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    `,
+    securite: `
+        <div class="card p-8">
+            <h2 class="text-3xl font-bold text-[#A47551] mb-4">Module 5 : Sécurité & Accessibilité</h2>
+            <p class="text-lg text-gray-600 mb-6">L'utilisation de services d'IA introduit de nouveaux défis en matière de sécurité et d'accessibilité. Ignorer ces aspects peut avoir des conséquences graves, allant de la fuite de données à l'exclusion d'utilisateurs en situation de handicap.</p>
+
+            <h3 class="text-2xl font-semibold mb-3 mt-8">Principaux Vecteurs de Risque en Sécurité</h3>
+             <div class="grid md:grid-cols-2 gap-4">
+                <div class="card p-4">
+                    <h4 class="font-bold">🔐 Gestion des Clés API</h4>
+                    <p class="text-sm mt-2">C'est la règle d'or. Une clé API qui fuite peut entraîner des coûts exorbitants ou un accès non autorisé à vos services. <br><strong>Solution :</strong> Stockez les clés dans des variables d'environnement sur votre serveur, utilisez des services de gestion de secrets (AWS Secrets Manager, etc.) et mettez en place des rotations de clés.</p>
+                </div>
+                <div class="card p-4">
+                    <h4 class="font-bold">💉 Injection de Prompts</h4>
+                    <p class="text-sm mt-2">Spécifique aux LLMs. Un utilisateur malveillant peut entrer un texte qui tente de manipuler le modèle pour qu'il ignore ses instructions initiales ou révèle des informations confidentielles. <br><strong>Solution :</strong> Validez et nettoyez ("sanitize") toutes les entrées utilisateur. Mettez en place des instructions claires dans votre prompt système pour rejeter les requêtes inappropriées.</p>
+                </div>
+                 <div class="card p-4">
+                    <h4 class="font-bold">📊 Confidentialité des Données</h4>
+                    <p class="text-sm mt-2">Les données que vous envoyez à une API externe (commentaires clients, documents...) peuvent être sensibles. Que fait le fournisseur avec ?<br><strong>Solution :</strong> Lisez attentivement les conditions d'utilisation du service. Privilégiez les fournisseurs qui garantissent ne pas utiliser vos données pour entraîner leurs modèles. Anonymisez les données avant de les envoyer si possible.</p>
+                </div>
+                 <div class="card p-4">
+                    <h4 class="font-bold">💸 Contrôle des Coûts</h4>
+                    <p class="text-sm mt-2">Un bug ou une attaque par déni de service (DoS) pourrait déclencher un très grand nombre d'appels API et générer une facture astronomique.<br><strong>Solution :</strong> Mettez en place des limites de consommation ("rate limiting") sur votre propre API. Configurez des alertes de budget chez votre fournisseur d'IA.</p>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-semibold mb-3 mt-8">Accessibilité (a11y) pour le contenu généré par l'IA</h3>
+             <p class="mb-4">Le contenu généré par IA doit être accessible à tous. Voici quelques points de vigilance :</p>
+             <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li><strong>Images générées :</strong> Elles doivent impérativement avoir un texte alternatif (attribut <code>alt</code>). Si la description est générée par IA, elle doit être pertinente.</li>
+                <li><strong>Texte généré :</strong> Assurez-vous qu'il soit bien structuré (titres, paragraphes) pour être correctement interprété par les lecteurs d'écran.</li>
+                <li><strong>Interfaces conversationnelles (chatbots) :</strong> Le chat doit être entièrement navigable au clavier et les messages doivent être annoncés par les lecteurs d'écran.</li>
+            </ul>
+
+             <div class="interactive-element">
+                <h4 class="text-lg font-semibold text-center mb-4">Mini-Quiz : Testez vos réflexes</h4>
+                <div id="quiz-container">
+                    <p class="text-center font-medium mb-4">Où est le meilleur endroit pour stocker la clé API d'un service d'IA dans une application web ?</p>
+                    <div class="space-y-2 max-w-md mx-auto">
+                        <button class="quiz-option block w-full text-left p-3 border rounded-lg hover:bg-gray-100">A) Dans le code source JavaScript du frontend.</button>
+                        <button class="quiz-option block w-full text-left p-3 border rounded-lg hover:bg-gray-100">B) Dans une variable d'environnement sur le serveur backend.</button>
+                        <button class="quiz-option block w-full text-left p-3 border rounded-lg hover:bg-gray-100">C) Dans le 'localStorage' du navigateur.</button>
+                    </div>
+                    <div id="quiz-feedback" class="mt-4 text-center font-semibold"></div>
+                </div>
+            </div>
+        </div>
+    `,
+    'etude-de-cas': `
+        <div class="card p-8">
+            <h2 class="text-3xl font-bold text-[#A47551] mb-4">Étude de Cas : Créer un "Générateur de Fiches Produits"</h2>
+            <p class="text-lg text-gray-600 mb-6">Mettons tout ce que nous avons appris en pratique. Un client e-commerce souhaite automatiser la création de descriptions marketing pour ses nouveaux produits. L'objectif est de gagner du temps et d'améliorer la qualité des textes.</p>
+
+            <h3 class="text-2xl font-semibold mb-3 mt-8">1. Analyse du Besoin</h3>
+            <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6">
+                <li><strong>Problème :</strong> La rédaction manuelle est lente et la qualité inégale.</li>
+                <li><strong>Objectif :</strong> Générer une description engageante à partir de quelques mots-clés (nom du produit, caractéristiques, public cible).</li>
+                <li><strong>Contraintes :</strong> Doit être intégré dans leur back-office existant. Le budget est modéré.</li>
+                <li><strong>Service d'IA requis :</strong> Un grand modèle de langage (LLM) capable de génération de texte créatif.</li>
+            </ul>
+
+            <h3 class="text-2xl font-semibold mb-3 mt-8">2. Sélection du Service</h3>
+            <p class="mb-4">Après une veille, deux candidats principaux émergent : l'API d'OpenAI (GPT-4) et l'API de Google (Gemini). Un PoC rapide montre que les deux donnent de bons résultats. OpenAI est légèrement plus créatif mais plus cher. Gemini est un excellent compromis performance/prix.</p>
+            <p class="font-bold"><strong>Préconisation :</strong> Utiliser l'API Google Gemini Pro via Vertex AI pour un meilleur contrôle des coûts et une bonne intégration avec l'écosystème Google Cloud que le client utilise déjà.</p>
+            
+            <h3 class="text-2xl font-semibold mb-3 mt-8">3. Conception de l'Architecture</h3>
+            <p class="mb-4">On suit le modèle classique :</p>
+            <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                <li>L'employé remplit un formulaire dans le back-office (<strong>Frontend</strong>).</li>
+                <li>Le formulaire est envoyé à notre <strong>Backend</strong> via un endpoint <code>/api/generate-description</code>.</li>
+                <li>Notre <strong>Backend</strong> construit un prompt détaillé et sécurisé, puis appelle l'API Gemini avec sa clé secrète.</li>
+                <li>L'API Gemini renvoie le texte généré.</li>
+                <li>Notre <strong>Backend</strong> renvoie la description au <strong>Frontend</strong>, qui l'affiche à l'employé pour validation.</li>
+            </ol>
+            
+            <h3 class="text-2xl font-semibold mb-3 mt-8">4. Paramétrage et Prompting</h3>
+            <p class="mb-4">Le succès de l'intégration dépend de la qualité du prompt. Il ne suffit pas de jeter les mots-clés au modèle. On va le "briefer" précisément.</p>
+             <div class="code-block text-sm">
+<pre><code>Tu es un copywriter expert en e-commerce pour la marque "StyleÉco".
+Rédige une description de produit engageante et optimisée pour le SEO.
+Adopte un ton jeune et dynamique.
+Mets en avant les bénéfices pour le client.
+Termine par un appel à l'action.
+
+Voici les informations sur le produit :
+- Nom : Baskets "Urban Explorer"
+- Caractéristiques : Toile recyclée, semelle en gomme naturelle, ultra-légères
+- Cible : Jeunes adultes urbains, soucieux de l'écologie
+
+Génère la description.
+</code></pre>
+            </div>
+
+            <div class="interactive-element">
+                <h4 class="text-lg font-semibold text-center mb-4">Visualisation des Coûts Estimés</h4>
+                <p class="text-center text-gray-600 mb-4">Pour 10 000 fiches produits générées par mois, voici une répartition possible des coûts liés à l'IA.</p>
+                <div class="chart-container" style="position: relative; height:40vh; width:80vw; max-width: 400px; margin: auto;">
+                    <canvas id="costChart"></canvas>
+                </div>
+            </div>
+        </div>
+    `
+};
+
+function navigate() {
+    const hash = window.location.hash || '#accueil';
+    const page = hash.substring(1);
+    
+    contentDiv.innerHTML = content[page] || content['accueil'];
+
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === hash) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+
+    window.scrollTo(0, 0);
+    
+    // Re-bind event listeners for interactive elements
+    if (page === 'analyse') {
+        document.getElementById('recommendBtn').addEventListener('click', () => {
+            const prio = document.getElementById('prio').value;
+            const custom = document.getElementById('custom').value;
+            const recommendationDiv = document.getElementById('recommendation');
+            let text = '';
+            if (prio === 'cout' && custom === 'non') {
+                text = '<strong>Préconisation :</strong> Un service de chatbot d\'entrée de gamme comme Dialogflow ES. Il est économique pour les scénarios simples et bien intégré à l\'écosystème Google.';
+            } else if (prio === 'performance' && custom === 'oui') {
+                text = '<strong>Préconisation :</strong> Une plateforme plus avancée comme Rasa (si vous avez des compétences techniques) ou l\'API OpenAI avec un système de RAG (Retrieval-Augmented Generation) pour la personnalisation. C\'est plus cher mais beaucoup plus performant.';
+            } else if (prio === 'simplicite') {
+                 text = '<strong>Préconisation :</strong> Des services "no-code" comme Voiceflow ou Botpress. Ils offrent une interface visuelle pour construire le chatbot et s\'intègrent facilement, mais peuvent être moins flexibles.';
+            } else {
+                 text = '<strong>Préconisation :</strong> Azure Bot Service ou Amazon Lex. Ils représentent un bon équilibre entre coût, performance et options de personnalisation, avec des SDKs clairs pour une intégration maîtrisée.';
+            }
+            recommendationDiv.innerHTML = text;
+            recommendationDiv.classList.remove('hidden');
+        });
+    }
+
+    if (page === 'integration') {
+        document.getElementById('sentimentBtn').addEventListener('click', () => {
+            const text = document.getElementById('sentimentText').value.toLowerCase();
+            const resultDiv = document.getElementById('sentimentResult');
+            let result = { sentiment: 'neutre', score: 0.5 };
+            
+            const positiveWords = ['incroyable', 'adore', 'super', 'génial', 'excellent', 'parfait'];
+            const negativeWords = ['décevant', 'mauvais', 'nul', 'horrible', 'problème'];
+
+            if (positiveWords.some(word => text.includes(word))) {
+                result = { sentiment: 'positif', score: (Math.random() * 0.2 + 0.8).toFixed(2) };
+            } else if (negativeWords.some(word => text.includes(word))) {
+                 result = { sentiment: 'négatif', score: (Math.random() * 0.2 + 0.1).toFixed(2) };
+            }
+            resultDiv.textContent = JSON.stringify(result, null, 2);
+        });
+    }
+
+    if (page === 'securite') {
+        document.querySelectorAll('.quiz-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                const feedbackDiv = document.getElementById('quiz-feedback');
+                document.querySelectorAll('.quiz-option').forEach(btn => btn.disabled = true);
+                if(e.target.textContent.includes('B)')) {
+                    e.target.classList.add('bg-green-200', 'border-green-400');
+                    feedbackDiv.textContent = 'Correct ! Les clés API ne doivent jamais quitter le serveur backend.';
+                    feedbackDiv.classList.add('text-green-700');
+                } else {
+                     e.target.classList.add('bg-red-200', 'border-red-400');
+                    feedbackDiv.textContent = 'Incorrect. Le frontend et le localStorage sont des environnements non sécurisés et visibles par l\'utilisateur.';
+                    feedbackDiv.classList.add('text-red-700');
+                }
+            });
+        });
+    }
+
+    if (page === 'etude-de-cas') {
+        const ctx = document.getElementById('costChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Appels API Gemini', 'Hébergement Backend', 'Développement & Maintenance'],
+                datasets: [{
+                    label: 'Répartition des coûts',
+                    data: [250, 80, 150],
+                    backgroundColor: [
+                        '#A47551',
+                        '#D1C5B9',
+                        '#F5F1EC',
+                    ],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(context.parsed);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+window.addEventListener('hashchange', navigate);
+document.addEventListener('DOMContentLoaded', navigate);
+
+</script>
+</body>
+</html>
