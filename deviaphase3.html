@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3 : Préparation et Gestion des Données pour l'IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Scholarly Neutrals -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive, single-page course module. A fixed sidebar navigation allows users to jump between four core learning sections: Data Flow, Collection, Structuring, and Availability. This non-linear structure respects the user's pace and allows them to revisit concepts easily. The homepage introduces the core concepts with an interactive data lifecycle diagram, where each stage is clickable, guiding the user to the relevant detailed section. This task-oriented design (learning about collection, then structuring, etc.) is more intuitive for a pedagogical tool than simply mirroring the source document's bullet points. Interactivity is key, with code snippets, diagrams, and checklists used to reinforce learning. -->
+    <!-- Visualization & Content Choices: 1. AI Data Lifecycle Diagram (Homepage): Report Info: Overall data flow. Goal: Organize/Inform. Viz: Interactive diagram built with HTML/CSS. Interaction: Clicking a stage scrolls to the relevant section. Justification: Provides a mental model and roadmap for the entire course. Method: HTML/CSS/JS. 2. Data Sources Chart (Collection Section): Report Info: Different data sources. Goal: Compare/Inform. Viz: Bar chart. Interaction: Hovering shows tooltips with more info. Justification: Visually quantifies the commonality of sources. Library: Chart.js (Canvas). 3. GDPR Checklist (Structuring Section): Report Info: GDPR compliance. Goal: Inform/Organize. Viz: Interactive checklist. Interaction: User checks items, a progress bar updates. Justification: Turns a passive list into an active learning exercise. Method: HTML/CSS/JS. All visualizations avoid SVG/Mermaid as required. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #4A4A4A;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        .nav-link.active {
+            border-left-color: #3B82F6;
+            background-color: #EFF6FF;
+            color: #1E40AF;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            background-color: #F3F4F6;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .code-block {
+            background-color: #2D3748;
+            color: #E2E8F0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 p-6 md:sticky md:top-0 md:h-screen">
+            <h1 class="text-xl font-bold text-blue-800">Formation IA</h1>
+            <p class="text-sm text-gray-500 mb-8">Gestion des Données</p>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="#accueil" class="nav-link block p-3 rounded-md mb-2">Accueil & Flux de Données</a></li>
+                    <li><a href="#collecte" class="nav-link block p-3 rounded-md mb-2">Collecte & Extraction</a></li>
+                    <li><a href="#structuration" class="nav-link block p-3 rounded-md mb-2">Structuration & Agrégation</a></li>
+                    <li><a href="#disposition" class="nav-link block p-3 rounded-md mb-2">Mise à Disposition</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-6 md:p-10">
+            <div id="accueil" class="content-section">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Phase 3 : Préparation et Gestion des Données</h2>
+                <p class="text-lg text-gray-600 mb-8">Bienvenue dans ce module dédié à la maîtrise des données, un pilier essentiel de tout projet d'IA. Nous allons explorer ensemble le cycle de vie complet de la donnée, de sa collecte à sa mise à disposition pour les modèles de Machine Learning.</p>
+                
+                <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Le Flux de Données pour l'IA</h3>
+                    <p class="text-center text-gray-600 mb-8">Ce diagramme interactif illustre les grandes étapes du pipeline de données en IA. Cliquez sur chaque étape pour explorer la section correspondante et comprendre son rôle crucial dans le projet.</p>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 text-center">
+                        <div class="flux-item p-6 bg-blue-50 border-2 border-blue-200 rounded-lg w-full md:w-1/4 cursor-pointer hover:shadow-lg transition-shadow" data-target="#collecte">
+                            <div class="text-5xl mb-3">📥</div>
+                            <h4 class="font-bold text-blue-800">1. Collecte</h4>
+                            <p class="text-sm text-blue-700">Extraire les données brutes de multiples sources.</p>
+                        </div>
+                        <div class="text-2xl text-gray-400 hidden md:block">➔</div>
+                        <div class="flux-item p-6 bg-green-50 border-2 border-green-200 rounded-lg w-full md:w-1/4 cursor-pointer hover:shadow-lg transition-shadow" data-target="#structuration">
+                            <div class="text-5xl mb-3">⚙️</div>
+                            <h4 class="font-bold text-green-800">2. Préparation</h4>
+                            <p class="text-sm text-green-700">Nettoyer, structurer et stocker les données.</p>
+                        </div>
+                        <div class="text-2xl text-gray-400 hidden md:block">➔</div>
+                        <div class="flux-item p-6 bg-purple-50 border-2 border-purple-200 rounded-lg w-full md:w-1/4 cursor-pointer hover:shadow-lg transition-shadow" data-target="#disposition">
+                             <div class="text-5xl mb-3">📡</div>
+                            <h4 class="font-bold text-purple-800">3. Mise à disposition</h4>
+                            <p class="text-sm text-purple-700">Exposer les données via des APIs pour les modèles.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="collecte" class="content-section">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Collecte et Extraction de Données</h2>
+                <p class="text-lg text-gray-600 mb-8">La première étape consiste à acquérir les données brutes. Un projet d'IA se nourrit de données provenant de sources très variées. La maîtrise des techniques de collecte et d'extraction est donc fondamentale pour construire des jeux de données riches et pertinents.</p>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <h3 class="font-bold text-xl mb-3">Principales Sources de Données</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li><span class="font-bold">🗃️ Bases de données :</span> SQL (PostgreSQL, MySQL) et NoSQL (MongoDB).</li>
+                            <li><span class="font-bold">📄 Fichiers plats :</span> CSV, JSON, XML, Parquet.</li>
+                            <li><span class="font-bold">🌐 Web Scraping :</span> Extraction de contenu depuis des pages web.</li>
+                            <li><span class="font-bold">🔗 APIs :</span> Interrogation de services tiers pour récupérer des données.</li>
+                            <li><span class="font-bold">🧊 Big Data / OLAP :</span> Systèmes comme Hadoop, Spark, ou des Data Warehouses.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                         <h3 class="font-bold text-xl mb-3">Répartition Typique des Sources</h3>
+                         <div class="chart-container">
+                             <canvas id="sourcesChart"></canvas>
+                         </div>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Exemples d'Extraction</h3>
+                <div class="bg-white p-6 rounded-lg shadow-sm border">
+                    <h4 class="font-semibold text-lg mb-2">Requête SQL d'extraction</h4>
+                    <p class="mb-3 text-gray-600">Exemple pour extraire les informations des clients ayant commandé un produit spécifique depuis une base de données relationnelle.</p>
+                    <div class="code-block">
+SELECT
+    c.client_id,
+    c.nom,
+    c.email,
+    p.date_achat
+FROM
+    clients c
+JOIN
+    achats p ON c.client_id = p.client_id
+WHERE
+    p.produit_id = 'PROD-123'
+AND
+    p.date_achat >= '2023-01-01';
+                    </div>
+                </div>
+            </div>
+
+            <div id="structuration" class="content-section">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Structuration et Agrégation de Données</h2>
+                <p class="text-lg text-gray-600 mb-8">Une fois collectées, les données brutes sont souvent hétérogènes et "bruyantes". Cette phase cruciale consiste à les nettoyer, les centraliser, les agréger et les stocker dans un format structuré et exploitable, tout en respectant les régulations en vigueur.</p>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <h3 class="font-bold text-xl mb-3">Bases de Données Relationnelles (SQL)</h3>
+                        <p class="text-gray-700">Idéales pour des données structurées avec des schémas fixes. Elles garantissent la cohérence des données (transactions ACID).</p>
+                        <p class="text-sm mt-2 text-gray-500">Ex: PostgreSQL, MySQL, SQL Server.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border">
+                        <h3 class="font-bold text-xl mb-3">Bases de Données Non-Relationnelles (NoSQL)</h3>
+                        <p class="text-gray-700">Parfaites pour des données non structurées ou semi-structurées, offrant une grande flexibilité et une scalabilité horizontale.</p>
+                        <p class="text-sm mt-2 text-gray-500">Ex: MongoDB (Document), Redis (Clé-Valeur).</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-md border">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Conformité RGPD : Checklist Essentielle</h3>
+                    <p class="text-gray-600 mb-6">La création d'une base de données doit impérativement respecter le Règlement Général sur la Protection des Données. Cochez les cases pour suivre les principes clés.</p>
+                    <div id="rgpd-checklist" class="space-y-4">
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-6">
+                        <div id="rgpd-progress" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%; transition: width 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="disposition" class="content-section">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Mise à Disposition des Données via API</h2>
+                <p class="text-lg text-gray-600 mb-8">Pour qu'un modèle d'IA puisse consommer les données préparées, il faut les lui rendre accessibles. La méthode standard est de développer une API (Application Programming Interface), qui sert de "porte d'entrée" sécurisée et standardisée vers votre jeu de données.</p>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm border mb-8">
+                    <h3 class="font-bold text-xl mb-3">Qu'est-ce qu'une API REST ?</h3>
+                    <p class="text-gray-700">Une API REST (Representational State Transfer) est un style d'architecture pour concevoir des applications en réseau. Elle utilise les méthodes HTTP standards (GET, POST, PUT, DELETE) pour interagir avec les ressources. C'est une manière légère, flexible et scalable de faire communiquer des services entre eux.</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-md border">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Exemple : API simple avec Python (Flask)</h3>
+                    <p class="text-gray-600 mb-4">Voici un exemple minimaliste d'une API qui expose un jeu de données sur les utilisateurs. Un appel à `/utilisateurs` renverra la liste des utilisateurs au format JSON.</p>
+                    <div class="code-block">
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+# Jeu de données d'exemple
+utilisateurs_data = [
+    {"id": 1, "nom": "Alice", "ville": "Paris"},
+    {"id": 2, "nom": "Bob", "ville": "Lyon"},
+    {"id": 3, "nom": "Charlie", "ville": "Marseille"}
+]
+
+@app.route('/utilisateurs', methods=['GET'])
+def get_utilisateurs():
+    """
+    Ce point de terminaison (endpoint) met à disposition
+    le jeu de données des utilisateurs.
+    """
+    return jsonify(utilisateurs_data)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('#main-nav a');
+    const contentSections = document.querySelectorAll('.content-section');
+    const fluxItems = document.querySelectorAll('.flux-item');
+
+    function setActiveSection(hash) {
+        const targetHash = hash || '#accueil';
+        
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === targetHash) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+
+        contentSections.forEach(section => {
+            if ('#' + section.id === targetHash) {
+                section.classList.add('active');
+            } else {
+                section.classList.remove('active');
+            }
+        });
+    }
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetHash = this.getAttribute('href');
+            setActiveSection(targetHash);
+            history.pushState(null, null, targetHash);
+        });
+    });
+
+    fluxItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const targetHash = this.getAttribute('data-target');
+            setActiveSection(targetHash);
+            history.pushState(null, null, targetHash);
+        });
+    });
+
+    window.addEventListener('popstate', () => {
+        setActiveSection(window.location.hash);
+    });
+
+    setActiveSection(window.location.hash);
+
+    const sourcesCtx = document.getElementById('sourcesChart');
+    if(sourcesCtx) {
+        new Chart(sourcesCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Bases de données', 'Fichiers plats', 'APIs', 'Big Data', 'Web Scraping'],
+                datasets: [{
+                    label: '% des projets IA',
+                    data: [45, 25, 15, 10, 5],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.6)',
+                        'rgba(16, 185, 129, 0.6)',
+                        'rgba(139, 92, 246, 0.6)',
+                        'rgba(239, 68, 68, 0.6)',
+                        'rgba(249, 115, 22, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(249, 115, 22, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Sources de données les plus communes'
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    const rgpdItems = [
+        { id: 'finalite', label: 'Finalité', description: 'Les données sont collectées pour un objectif précis, explicite et légitime.' },
+        { id: 'minimisation', label: 'Minimisation', description: 'Seules les données strictement nécessaires à la finalité sont collectées.' },
+        { id: 'conservation', label: 'Durée de conservation limitée', description: 'Les données sont conservées uniquement le temps nécessaire pour atteindre l’objectif.' },
+        { id: 'securite', label: 'Sécurité et confidentialité', description: 'Des mesures de sécurité sont en place pour protéger les données.' },
+        { id: 'droit', label: 'Droits des personnes', description: 'Les utilisateurs peuvent accéder, rectifier ou supprimer leurs données.' },
+        { id: 'anonymisation', label: 'Anonymisation / Pseudonymisation', description: 'Les données personnelles sont anonymisées ou pseudonymisées dès que possible.' }
+    ];
+    const checklistContainer = document.getElementById('rgpd-checklist');
+    const progressBar = document.getElementById('rgpd-progress');
+    let checkedCount = 0;
+
+    rgpdItems.forEach(item => {
+        const itemHtml = `
+            <div class="flex items-start">
+                <input id="${item.id}" type="checkbox" class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-1 rgpd-checkbox">
+                <div class="ml-3 text-sm">
+                    <label for="${item.id}" class="font-medium text-gray-700">${item.label}</label>
+                    <p class="text-gray-500">${item.description}</p>
+                </div>
+            </div>
+        `;
+        checklistContainer.innerHTML += itemHtml;
+    });
+
+    const checkboxes = document.querySelectorAll('.rgpd-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            checkedCount = document.querySelectorAll('.rgpd-checkbox:checked').length;
+            const progress = (checkedCount / rgpdItems.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        });
+    });
+});
+</script>
+
+</body>
+</html>
