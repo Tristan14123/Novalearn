@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation Machine Learning pour Débutant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc;
+            color: #1a202c;
+            line-height: 1.6;
+        }
+        .container-content {
+            max-width: 80rem;
+        }
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #2c5282;
+            margin-bottom: 1.5rem;
+        }
+        .section-subtitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+        code {
+            font-family: monospace;
+            background-color: #f0f4f8;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            color: #3182ce;
+        }
+        pre {
+            background-color: #1a202c;
+            color: #cbd5e0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+
+    <!-- Header & Hero Section -->
+    <header class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-blue-900 mb-4">
+            Formation Machine Learning
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-700">
+            Devenez un expert en IA, même sans connaissances préalables.
+        </p>
+        <button id="startButton" class="mt-8 px-8 py-3 bg-blue-600 text-white text-lg font-bold rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-300 transform hover:scale-105">
+            Démarrer la formation
+        </button>
+    </header>
+
+    <!-- Content Sections -->
+    <main id="content" class="container-content mx-auto mt-8 opacity-0 transition-opacity duration-1000">
+        
+        <!-- Introduction -->
+        <section class="mb-12">
+            <h2 class="section-title">Qu'est-ce que le Machine Learning ?</h2>
+            <div class="card">
+                <p class="text-lg">
+                    Le Machine Learning (ML), ou apprentissage automatique, est une branche de l'intelligence artificielle (IA) qui permet aux machines d'apprendre à partir de données, sans être explicitement programmées pour chaque tâche. Au lieu de suivre des instructions rigides, elles utilisent des algorithmes pour analyser de grands volumes de données, en extraire des modèles et prendre des décisions ou faire des prédictions.
+                </p>
+                <div class="mt-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 rounded-lg">
+                    <p class="font-semibold text-yellow-800">
+                        Exemple du quotidien : Les moteurs de recommandation sur Netflix ou Spotify sont des applications de ML.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Les Fondations Théoriques -->
+        <section class="mb-12">
+            <h2 class="section-title">Les fondations théoriques</h2>
+            <div class="card">
+                <h3 class="section-subtitle">Les 3 types d'apprentissage</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="p-6 bg-gray-50 rounded-lg">
+                        <h4 class="font-bold text-blue-700">Apprentissage Supervisé</h4>
+                        <p class="text-sm text-gray-600 mt-2">
+                            Le modèle est entraîné avec des données étiquetées (paires d'entrées et de sorties désirées). C'est comme apprendre avec un mentor.
+                        </p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-lg">
+                        <h4 class="font-bold text-blue-700">Apprentissage Non-supervisé</h4>
+                        <p class="text-sm text-gray-600 mt-2">
+                            Le modèle reçoit des données sans étiquette et doit trouver lui-même des structures ou des regroupements cachés.
+                        </p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-lg">
+                        <h4 class="font-bold text-blue-700">Apprentissage par Renforcement</h4>
+                        <p class="text-sm text-gray-600 mt-2">
+                            Le modèle interagit avec un environnement et apprend en fonction des récompenses ou pénalités qu'il reçoit pour ses actions.
+                        </p>
+                    </div>
+                </div>
+
+                <h3 class="section-subtitle">Prérequis: Python et les bibliothèques</h3>
+                <p class="text-lg">
+                    Python est le langage de choix pour le Machine Learning. Voici les bibliothèques incontournables :
+                </p>
+                <ul class="list-disc list-inside mt-4 space-y-2">
+                    <li><span class="font-semibold text-blue-700">Pandas :</span> Pour l'analyse et la manipulation de données.</li>
+                    <li><span class="font-semibold text-blue-700">NumPy :</span> Pour les calculs scientifiques et les tableaux.</li>
+                    <li><span class="font-semibold text-blue-700">Matplotlib / Seaborn :</span> Pour la visualisation des données.</li>
+                    <li><span class="font-semibold text-blue-700">Scikit-learn :</span> Le couteau suisse du ML.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Le Cycle de Vie d'un Projet ML -->
+        <section class="mb-12">
+            <h2 class="section-title">Le cycle de vie d'un projet ML</h2>
+            <div class="card">
+                <h3 class="section-subtitle">La préparation des données</h3>
+                <p class="text-lg">
+                    C'est l'étape la plus cruciale. Le mantra est : "Garbage In, Garbage Out".
+                </p>
+                <h4 class="font-bold text-lg mt-4 mb-2">Exemple de nettoyage de données avec Pandas</h4>
+                <pre id="code-example-1">
+                    <code>
+import pandas as pd
+
+# Charger un jeu de données
+df = pd.read_csv('votre_fichier.csv')
+
+# Compter le nombre de valeurs manquantes
+print(df.isnull().sum())
+
+# Remplacer les valeurs manquantes d'une colonne par sa moyenne
+df['colonne_a_traiter'].fillna(df['colonne_a_traiter'].mean(), inplace=True)
+                    </code>
+                </pre>
+                <button onclick="explainCode('code-example-1')" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300">
+                    Expliquez le code ✨
+                </button>
+                <div id="explanation-1" class="mt-4 p-4 bg-blue-50 text-blue-800 rounded-lg hidden">
+                    <p class="font-semibold text-lg mb-2">Explication:</p>
+                    <div id="explanation-text-1"></div>
+                    <div id="loading-1" class="hidden">Chargement...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Algorithmes Fondamentaux -->
+        <section class="mb-12">
+            <h2 class="section-title">Algorithmes Fondamentaux</h2>
+            <div class="card">
+                <h3 class="section-subtitle">Régression Linéaire vs. Régression Logistique</h3>
+                <div class="overflow-x-auto mt-4">
+                    <table class="min-w-full divide-y divide-gray-200 rounded-lg">
+                        <thead class="bg-blue-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Caractéristique</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Régression Linéaire</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Régression Logistique</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">Type de problème</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Régression (prédiction d'une valeur)</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Classification (prédiction d'une catégorie)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">Exemple d'application</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Prédire le prix d'une maison</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Prédire si un client se désabonne</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projets Pratiques -->
+        <section class="mb-12">
+            <h2 class="section-title">Projets Pratiques</h2>
+            <div class="card">
+                <h3 class="section-subtitle">Projet 1: Classification des fleurs d'Iris</h3>
+                <p class="text-lg">
+                    Le jeu de données des fleurs d'Iris est un classique pour les débutants. L'objectif est de prédire l'espèce d'une fleur. Voici un exemple d'entraînement avec Scikit-learn :
+                </p>
+                <pre id="code-example-2">
+                    <code>
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn import datasets
+
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+model = LogisticRegression(max_iter=200)
+model.fit(X_train, y_train)
+
+# Vous pouvez maintenant évaluer votre modèle sur X_test
+                    </code>
+                </pre>
+                <button onclick="explainCode('code-example-2')" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300">
+                    Expliquez le code ✨
+                </button>
+                <div id="explanation-2" class="mt-4 p-4 bg-blue-50 text-blue-800 rounded-lg hidden">
+                    <p class="font-semibold text-lg mb-2">Explication:</p>
+                    <div id="explanation-text-2"></div>
+                    <div id="loading-2" class="hidden">Chargement...</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Assistant IA pour questions -->
+        <section class="mb-12">
+            <h2 class="section-title">Besoin d'aide ? Demandez à l'IA !</h2>
+            <div class="card">
+                <p class="text-lg mb-4">
+                    Posez n'importe quelle question sur le Machine Learning et obtenez une réponse instantanée.
+                </p>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input type="text" id="question-input" placeholder="Par exemple : Qu'est-ce que la sur-apprentissage ?" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                    <button id="ask-button" class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300">
+                        Demander à l'IA ✨
+                    </button>
+                </div>
+                <div id="question-response" class="mt-6 p-4 bg-gray-100 rounded-lg hidden">
+                    <p id="response-text" class="text-gray-700"></p>
+                    <div id="response-loading" class="hidden mt-2">Chargement...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 mt-16 text-sm">
+            <p>&copy; 2023 Formation IA. Tous droits réservés.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const content = document.getElementById('content');
+        const questionInput = document.getElementById('question-input');
+        const askButton = document.getElementById('ask-button');
+        const questionResponseDiv = document.getElementById('question-response');
+        const responseTextDiv = document.getElementById('response-text');
+        const responseLoadingDiv = document.getElementById('response-loading');
+
+        const apiKey = ""; // L'API Key sera fournie par l'environnement
+        const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=" + apiKey;
+        
+        startButton.addEventListener('click', () => {
+            content.scrollIntoView({ behavior: 'smooth' });
+            content.classList.remove('opacity-0');
+        });
+
+        async function fetchWithExponentialBackoff(request) {
+            const maxRetries = 3;
+            let retries = 0;
+            while (true) {
+                try {
+                    const response = await fetch(request);
+                    if (response.status === 429 && retries < maxRetries) {
+                        const delay = Math.pow(2, retries) * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        retries++;
+                        continue;
+                    }
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.statusText}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (retries >= maxRetries) {
+                        throw error;
+                    }
+                    const delay = Math.pow(2, retries) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    retries++;
+                }
+            }
+        }
+
+        async function askGemini(prompt, targetTextDiv, targetLoadingDiv) {
+            targetTextDiv.innerHTML = '';
+            targetLoadingDiv.classList.remove('hidden');
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: {
+                    parts: [{ text: "You are a pedagogical and concise assistant. You explain complex machine learning concepts in a clear, step-by-step manner. Your responses are in French. Avoid code snippets and focus on clear explanations." }]
+                }
+            };
+
+            const request = new Request(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            try {
+                const response = await fetchWithExponentialBackoff(request);
+                const result = await response.json();
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                    targetTextDiv.innerHTML = text.replace(/\n/g, '<br>');
+                } else {
+                    targetTextDiv.innerHTML = "Une erreur est survenue lors de la génération de la réponse.";
+                }
+            } catch (error) {
+                console.error("Erreur de l'API:", error);
+                targetTextDiv.innerHTML = "Désolé, une erreur s'est produite. Veuillez réessayer plus tard.";
+            } finally {
+                targetLoadingDiv.classList.add('hidden');
+            }
+        }
+
+        async function explainCode(elementId) {
+            const codeBlock = document.querySelector(`#${elementId} code`);
+            const explanationDiv = document.getElementById(`explanation-${elementId.split('-').pop()}`);
+            const explanationTextDiv = document.getElementById(`explanation-text-${elementId.split('-').pop()}`);
+            const loadingDiv = document.getElementById(`loading-${elementId.split('-').pop()}`);
+            
+            explanationDiv.classList.remove('hidden');
+
+            const prompt = `Expliquez ce code Python de Machine Learning pas à pas, de manière très pédagogique et en français : \n\n${codeBlock.innerText}`;
+            await askGemini(prompt, explanationTextDiv, loadingDiv);
+        }
+
+        askButton.addEventListener('click', async () => {
+            const question = questionInput.value.trim();
+            if (question) {
+                questionResponseDiv.classList.remove('hidden');
+                await askGemini(question, responseTextDiv, responseLoadingDiv);
+            }
+        });
+    </script>
+
+</body>
+</html>
