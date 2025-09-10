@@ -1,0 +1,291 @@
+<!-- Chosen Palette: Warm Neutrals & Deep Blues -->
+<!-- Application Structure Plan: The application uses a single-page, vertically-scrolling structure. It is divided into thematic sections: an introduction, a market growth dashboard, a salary comparison chart, a developer role evolution section, and a skills overview. This structure was chosen to guide the user through the report's key arguments in a logical flow, from the broad market context to specific skills. The main interactions involve clicking on "tabs" to switch content within a section and hovering on chart elements for detailed data, making the dense information digestible. -->
+<!-- Visualization & Content Choices: 
+- Report Info -> Goal: Present market growth and job creation stats. -> Viz/Presentation Method: Interactive dashboard with key metrics and a text block. -> Interaction: Clickable metrics to highlight corresponding text details. -> Justification: Breaks down complex numbers into digestible chunks, making the scale of the market shift clear. -> Library/Method: HTML/CSS/Tailwind + JS for dynamic text updates.
+- Report Info -> Goal: Compare salaries across different AI roles. -> Viz/Presentation Method: Bar chart. -> Interaction: Hover tooltips for exact values. -> Justification: Bar charts are excellent for direct comparisons, clearly showing the salary premium for specialized roles. -> Library/Method: Chart.js (Canvas).
+- Report Info -> Goal: Explain the changing role of the developer. -> Viz/Presentation Method: Thematic text blocks with toggles. -> Interaction: Clickable titles to reveal/hide detailed text. -> Justification: Allows users to explore different facets of the new role (architect, strategist) without overwhelming the page, supporting a non-linear exploration. -> Library/Method: HTML/CSS/Tailwind + JS for toggle logic.
+- Report Info -> Goal: Summarize key technical skills. -> Viz/Presentation Method: Tabbed content view. -> Interaction: Clickable tabs to switch between skill categories (Python, Frameworks, etc.). -> Justification: Organizes a large amount of information into manageable, distinct sections, preventing visual clutter and allowing the user to focus on one topic at a time. -> Library/Method: HTML/CSS/Tailwind + JS for tab switching.
+- General -> Goal: Provide a seamless, responsive experience. -> Viz/Presentation Method: All content is contained within a responsive Tailwind grid/flexbox layout. -> Interaction: Fluid scaling of all components. -> Justification: Ensures the application is usable and visually appealing on all devices without horizontal scrolling. -> Library/Method: Tailwind CSS.
+CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation IA : Un avenir interactif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f3ee;
+            color: #2c3e50;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px; 
+            max-height: 500px;
+        }
+        .section-title {
+            color: #1a2a46;
+        }
+        .text-card {
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<div class="container mx-auto px-4 py-8 md:px-8">
+    <header class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-section-title mb-4 leading-tight">Pourquoi une formation en IA en 2025 ?</h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Explorez les données qui démontrent pourquoi l'intelligence artificielle n'est pas seulement l'avenir, mais le présent de la carrière de développeur.
+        </p>
+    </header>
+
+    <main class="space-y-16">
+        <!-- Section 1: Introduction & Marché de l'emploi -->
+        <section class="bg-[#e9e3dc] p-8 rounded-2xl shadow-lg">
+            <h2 class="text-3xl font-bold section-title mb-6">Le marché en pleine révolution</h2>
+            <p class="text-gray-700 leading-relaxed mb-8">
+                L'IA est devenue le principal moteur de croissance. L'analyse ci-dessous vous montre comment elle crée des opportunités et non une destruction massive d'emplois, en mettant en lumière le décalage entre les investissements des entreprises et le manque de profils qualifiés.
+            </p>
+            <div class="grid md:grid-cols-3 gap-6 text-center">
+                <div class="text-card p-6 rounded-xl shadow-md transition-transform transform hover:scale-105" data-stat="jobs">
+                    <div class="text-4xl font-extrabold text-indigo-700">78M+</div>
+                    <div class="text-gray-500 mt-2">Nouveaux emplois nets d'ici 2030</div>
+                </div>
+                <div class="text-card p-6 rounded-xl shadow-md transition-transform transform hover:scale-105" data-stat="productivity">
+                    <div class="text-4xl font-extrabold text-indigo-700">27%</div>
+                    <div class="text-gray-500 mt-2">Gain de productivité en 2024</div>
+                </div>
+                <div class="text-card p-6 rounded-xl shadow-md transition-transform transform hover:scale-105" data-stat="investment">
+                    <div class="text-4xl font-extrabold text-indigo-700">25%</div>
+                    <div class="text-gray-500 mt-2">Des entreprises qui investissent plus de $20M en IA</div>
+                </div>
+            </div>
+            <div id="stat-details" class="mt-8 text-gray-700 leading-relaxed text-center">
+                Cliquez sur un chiffre ci-dessus pour en savoir plus.
+            </div>
+        </section>
+
+        <!-- Section 2: Salaires -->
+        <section class="p-8 rounded-2xl shadow-lg bg-white">
+            <h2 class="text-3xl font-bold section-title mb-6">Des salaires à la hauteur de l'expertise</h2>
+            <p class="text-gray-700 leading-relaxed mb-8">
+                La rareté des profils qualifiés en IA se traduit par une prime salariale significative. Ce graphique compare les salaires annuels moyens en France pour différents rôles spécialisés, mettant en évidence la valeur de l'expertise en IA.
+            </p>
+            <div class="chart-container">
+                <canvas id="salaryChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Section 3: Rôle du développeur -->
+        <section class="bg-[#e9e3dc] p-8 rounded-2xl shadow-lg">
+            <h2 class="text-3xl font-bold section-title mb-6">Le développeur: de l'artisan à l'architecte</h2>
+            <p class="text-gray-700 leading-relaxed mb-8">
+                L'IA ne remplace pas les développeurs, elle transforme leur rôle. Explorez ci-dessous comment les nouvelles missions se concentrent sur la stratégie et la créativité.
+            </p>
+            <div class="space-y-4">
+                <div class="bg-white p-6 rounded-xl shadow-md toggle-card cursor-pointer">
+                    <h3 class="text-xl font-semibold text-gray-800">L'Architecture logicielle</h3>
+                    <p class="text-gray-600 mt-2 hidden toggle-content">
+                        Le développeur de demain conçoit des systèmes qui intègrent les modèles d'IA de manière efficace et scalable, se concentrant sur la structure globale plutôt que sur les détails du code.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md toggle-card cursor-pointer">
+                    <h3 class="text-xl font-semibold text-gray-800">La Compréhension métier</h3>
+                    <p class="text-gray-600 mt-2 hidden toggle-content">
+                        L'IA permet au développeur de passer plus de temps à analyser les besoins et à identifier où la technologie peut réellement générer de la valeur pour l'entreprise.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md toggle-card cursor-pointer">
+                    <h3 class="text-xl font-semibold text-gray-800">La Supervision et Validation</h3>
+                    <p class="text-gray-600 mt-2 hidden toggle-content">
+                        Avec l'automatisation du code, le rôle humain devient crucial pour détecter les vulnérabilités de sécurité et gérer les biais éthiques dans les systèmes d'IA.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 4: Compétences -->
+        <section class="p-8 rounded-2xl shadow-lg bg-white">
+            <h2 class="text-3xl font-bold section-title mb-6">Les compétences techniques à maîtriser</h2>
+            <p class="text-gray-700 leading-relaxed mb-8">
+                Une formation en IA vous apporte un ensemble de compétences clés. Utilisez les onglets pour explorer les différents domaines de spécialisation et les outils essentiels.
+            </p>
+            <div class="flex space-x-2 md:space-x-4 mb-6">
+                <button class="tab-button px-4 py-2 rounded-full text-sm md:text-base font-medium transition-colors bg-gray-200 text-gray-800" data-tab="languages">Langages</button>
+                <button class="tab-button px-4 py-2 rounded-full text-sm md:text-base font-medium transition-colors bg-gray-200 text-gray-800" data-tab="frameworks">Frameworks</button>
+                <button class="tab-button px-4 py-2 rounded-full text-sm md:text-base font-medium transition-colors bg-gray-200 text-gray-800" data-tab="roles">Rôles</button>
+            </div>
+            <div id="tab-content" class="text-gray-700 leading-relaxed">
+                <div class="tab-panel" id="languages">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Langages de programmation</h3>
+                    <p>
+                        **Python** est incontournable. C++ et C# sont utiles pour la performance, Java pour les applications d'entreprise et JavaScript pour le web.
+                    </p>
+                </div>
+                <div class="tab-panel hidden" id="frameworks">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Frameworks et outils essentiels</h3>
+                    <p>
+                        Maîtrisez **TensorFlow** et **PyTorch** pour les modèles, **NumPy** et **Pandas** pour l'analyse de données, et **LangChain** pour les LLM.
+                    </p>
+                </div>
+                <div class="tab-panel hidden" id="roles">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Compétences par spécialisation</h3>
+                    <p>
+                        Le **Développeur Front-end** se concentre sur l'expérience utilisateur. Le **Back-end** gère les systèmes de recommandation. Le **Fullstack** combine les deux avec une compréhension stratégique.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer class="text-center text-gray-500 py-8 text-sm">
+    <p>&copy; 2025 Novalearn. Tous droits réservés.</p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const salaryData = {
+            labels: ['Développeur IA', 'Ingénieur Machine Learning', 'Ingénieur Big Data', 'Data Scientist', 'Ingénieur IA Éthique', 'Développeur Fullstack Junior'],
+            datasets: [{
+                label: 'Salaire Annuel Moyen (France)',
+                data: [55200, 65000, 65000, 60000, 57000, 45000],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)',
+                    'rgba(255, 159, 64, 0.8)',
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(201, 203, 207, 0.8)'
+                ],
+                borderColor: [
+                    'rgb(75, 192, 192)',
+                    'rgb(153, 102, 255)',
+                    'rgb(255, 159, 64)',
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(201, 203, 207)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const salaryChart = new Chart(document.getElementById('salaryChart').getContext('2d'), {
+            type: 'bar',
+            data: salaryData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Salaire Annuel (€)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            callback: function(value) {
+                                const label = this.getLabelForValue(value);
+                                if (label.length > 16) {
+                                    return label.split(' ');
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Stat details logic
+        const statDetails = {
+            'jobs': "Le Forum Économique Mondial projette la création de 170 millions de nouveaux emplois en IA d'ici 2030, contredisant l'idée de destruction de masse d'emplois.",
+            'productivity': "Les services financiers et l'édition de logiciels en France ont vu leur productivité quasi quadrupler grâce à l'IA entre 2018 et 2024.",
+            'investment': "Malgré un faible rendement perçu, 25% des entreprises prévoient d'investir plus de 20 millions de dollars en IA dans les 3 prochaines années, soulignant la 'crise des compétences'."
+        };
+
+        document.querySelectorAll('[data-stat]').forEach(item => {
+            item.addEventListener('click', () => {
+                const stat = item.getAttribute('data-stat');
+                document.getElementById('stat-details').textContent = statDetails[stat];
+            });
+        });
+
+        // Toggle card logic
+        document.querySelectorAll('.toggle-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const content = card.querySelector('.toggle-content');
+                content.classList.toggle('hidden');
+                card.classList.toggle('bg-[#e9e3dc]');
+                card.classList.toggle('shadow-lg');
+            });
+        });
+
+        // Tab content logic
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        function activateTab(tabId) {
+            tabButtons.forEach(button => {
+                if (button.getAttribute('data-tab') === tabId) {
+                    button.classList.add('bg-indigo-700', 'text-white');
+                    button.classList.remove('bg-gray-200', 'text-gray-800');
+                } else {
+                    button.classList.remove('bg-indigo-700', 'text-white');
+                    button.classList.add('bg-gray-200', 'text-gray-800');
+                }
+            });
+            tabPanels.forEach(panel => {
+                if (panel.id === tabId) {
+                    panel.classList.remove('hidden');
+                } else {
+                    panel.classList.add('hidden');
+                }
+            });
+        }
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                activateTab(button.getAttribute('data-tab'));
+            });
+        });
+        
+        activateTab('languages');
+    });
+</script>
+</body>
+</html>
