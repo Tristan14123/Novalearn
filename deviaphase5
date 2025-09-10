@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours Interactif : Pilotage de Projets d'IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: La structure est conçue comme un parcours d'apprentissage modulaire et non linéaire. Au lieu d'une simple liste, l'application utilise une navigation par onglets pour les deux compétences clés (Analyse/Conception et Coordination/Gestion), permettant à l'utilisateur d'explorer chaque domaine en profondeur. Cette approche est choisie pour sa clarté et pour permettre un apprentissage auto-dirigé. Un diagramme interactif du cycle de vie d'un projet d'IA sert de cadre conceptuel, reliant la théorie à la pratique. Enfin, un "tableau de bord des compromis" avec un graphique radar interactif est inclus pour simuler les décisions de gestion réelles, rendant l'apprentissage plus concret et engageant. Cette structure a été préférée à une simple page de défilement pour mieux segmenter les informations complexes et encourager l'interaction active. -->
+    <!-- Visualization & Content Choices: 
+        1. Cycle de Vie du Projet IA -> Goal: Organiser/Informer -> Viz: Diagramme de processus interactif (HTML/CSS) -> Interaction: Clic sur une phase pour afficher les détails -> Justification: Offre une vue d'ensemble structurée et sert de fil conducteur pour le cours.
+        2. Compromis de Gestion -> Goal: Relations/Comparer -> Viz: Radar Chart (Chart.js) -> Interaction: Des boutons modifient les données du graphique pour illustrer différents scénarios de projet -> Justification: Visualise de manière dynamique les compromis complexes (coût, temps, qualité) qu'un chef de projet doit gérer, ce qui est difficile à expliquer avec du texte seul. -> Library: Chart.js
+        3. Méthodologies (Agile vs Cascade) -> Goal: Comparer -> Viz: Tableau comparatif (HTML/Tailwind) et Bar Chart (Chart.js) -> Interaction: Sélection de filtres pour le graphique à barres -> Justification: Met en évidence les différences fondamentales entre les approches de gestion de projet, et le graphique montre la répartition typique de l'effort, un point clé dans la planification des projets d'IA. -> Library: Chart.js
+        Toutes les interactions sont gérées en Vanilla JS pour mettre à jour le contenu et les graphiques de manière dynamique. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #1a202c;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            border-color: #0d9488;
+            color: #0d9488;
+            background-color: #f0fdfa;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .lifecycle-step {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .lifecycle-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .scenario-button.active {
+            background-color: #0d9488;
+            color: white;
+            border-color: #0d9488;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">Piloter des Projets d'Intelligence Artificielle</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">Devenez un leader capable de transformer une vision IA en une réalité technique et commerciale.</p>
+        </header>
+
+        <main>
+            <!-- Section Cycle de Vie -->
+            <section id="lifecycle" class="mb-16">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-700">Le Cycle de Vie d'un Projet IA</h2>
+                <p class="text-center text-gray-600 mb-10 max-w-4xl mx-auto">Un projet d'IA est un parcours itératif, bien plus qu'un simple développement logiciel. Chaque phase a ses propres défis et livrables. Cliquez sur chaque étape pour découvrir ses spécificités, des premières analyses de besoin jusqu'à la maintenance continue du modèle en production.</p>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-center">
+                    <div class="lifecycle-step-container flex items-center md:block">
+                        <div class="lifecycle-step cursor-pointer p-4 bg-white rounded-lg shadow-md border border-gray-200 flex-grow" onclick="showLifecycleDetail(0)">
+                            <div class="text-3xl mb-2">1️⃣</div>
+                            <h3 class="font-bold text-teal-700">Analyse des Besoins</h3>
+                        </div>
+                        <div class="hidden md:block w-full border-t-2 border-dashed border-gray-300 mx-2"></div>
+                    </div>
+                    <div class="lifecycle-step-container flex items-center md:block">
+                        <div class="lifecycle-step cursor-pointer p-4 bg-white rounded-lg shadow-md border border-gray-200 flex-grow" onclick="showLifecycleDetail(1)">
+                            <div class="text-3xl mb-2">2️⃣</div>
+                            <h3 class="font-bold text-teal-700">Conception & Cadrage</h3>
+                        </div>
+                        <div class="hidden md:block w-full border-t-2 border-dashed border-gray-300 mx-2"></div>
+                    </div>
+                    <div class="lifecycle-step-container flex items-center md:block">
+                        <div class="lifecycle-step cursor-pointer p-4 bg-white rounded-lg shadow-md border border-gray-200 flex-grow" onclick="showLifecycleDetail(2)">
+                            <div class="text-3xl mb-2">3️⃣</div>
+                            <h3 class="font-bold text-teal-700">Développement & MLOps</h3>
+                        </div>
+                        <div class="hidden md:block w-full border-t-2 border-dashed border-gray-300 mx-2"></div>
+                    </div>
+                    <div class="lifecycle-step-container flex items-center md:block">
+                         <div class="lifecycle-step cursor-pointer p-4 bg-white rounded-lg shadow-md border border-gray-200 flex-grow" onclick="showLifecycleDetail(3)">
+                            <div class="text-3xl mb-2">4️⃣</div>
+                            <h3 class="font-bold text-teal-700">Coordination Agile</h3>
+                        </div>
+                         <div class="hidden md:block w-full border-t-2 border-dashed border-gray-300 mx-2"></div>
+                    </div>
+                     <div class="lifecycle-step-container flex items-center md:block">
+                        <div class="lifecycle-step cursor-pointer p-4 bg-white rounded-lg shadow-md border border-gray-200 flex-grow" onclick="showLifecycleDetail(4)">
+                            <div class="text-3xl mb-2">5️⃣</div>
+                            <h3 class="font-bold text-teal-700">Déploiement & Suivi</h3>
+                        </div>
+                    </div>
+                </div>
+                <div id="lifecycle-detail" class="mt-8 p-6 bg-teal-50 border-l-4 border-teal-500 rounded-r-lg text-gray-700 min-h-[100px]">
+                    <!-- Contenu dynamique ici -->
+                </div>
+            </section>
+
+            <!-- Section Compétences Clés -->
+            <section id="core-skills" class="bg-white p-6 md:p-10 rounded-2xl shadow-lg">
+                <div class="mb-8 border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-4" aria-label="Tabs">
+                        <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg active" onclick="switchTab(event, 'conception')">
+                            Analyse de Besoins et Conception
+                        </button>
+                        <button class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg" onclick="switchTab(event, 'gestion')">
+                            Coordination et Gestion de Projet
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Contenu Tab 1: Conception -->
+                <div id="conception" class="tab-content active">
+                    <p class="text-gray-600 mb-8">Cette compétence est cruciale : elle consiste à traduire un problème métier en une solution technique IA viable. Cela implique de comprendre en profondeur le besoin de l'utilisateur, de définir des métriques de succès claires et de concevoir une architecture robuste qui intègre non seulement le modèle d'IA, mais aussi tout le pipeline de données et MLOps nécessaire pour son déploiement et sa maintenance.</p>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <article class="p-6 bg-gray-50 rounded-lg">
+                            <h4 class="font-bold text-xl mb-3 text-teal-800">Analyser une Expression de Besoin</h4>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                <li><strong>Problem Framing :</strong> Reformuler le besoin métier en un problème de machine learning (classification, régression, etc.).</li>
+                                <li><strong>Analyse de Faisabilité :</strong> Évaluer la disponibilité et la qualité des données, les contraintes techniques et les risques.</li>
+                                <li><strong>Définition des KPIs :</strong> Établir des métriques claires pour mesurer le succès du projet (ex: précision du modèle, ROI).</li>
+                                <li><strong>Cas d'Usage :</strong> Documenter précisément comment les utilisateurs interagiront avec l'application IA.</li>
+                            </ul>
+                        </article>
+                        <article class="p-6 bg-gray-50 rounded-lg">
+                            <h4 class="font-bold text-xl mb-3 text-teal-800">Concevoir le Cadre Technique</h4>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                <li><strong>Architecture de la Solution :</strong> Schématiser les composants (API, base de données, service IA, front-end).</li>
+                                <li><strong>Choix Technologiques :</strong> Sélectionner les frameworks (TensorFlow, PyTorch), les plateformes cloud (AWS, GCP, Azure) et les outils.</li>
+                                <li><strong>Conception du Pipeline MLOps :</strong> Planifier l'automatisation de l'ingestion de données, l'entraînement, le versioning, le déploiement et le monitoring.</li>
+                                <li><strong>Sécurité et Éthique :</strong> Anticiper les biais potentiels, la protection des données et la robustesse du système.</li>
+                            </ul>
+                        </article>
+                    </div>
+                </div>
+
+                <!-- Contenu Tab 2: Gestion -->
+                <div id="gestion" class="tab-content">
+                     <p class="text-gray-600 mb-8">Coordonner un projet d'IA, c'est orchestrer le travail d'équipes pluridisciplinaires (data scientists, ingénieurs, experts métier) dans un environnement souvent incertain. La gestion agile est particulièrement adaptée pour naviguer dans la nature exploratoire de l'IA, en permettant des itérations rapides, des feedbacks continus et une adaptation constante aux nouvelles découvertes.</p>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <article class="p-6 bg-gray-50 rounded-lg mb-8">
+                                <h4 class="font-bold text-xl mb-3 text-teal-800">Organisation et Pilotage Agile</h4>
+                                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                    <li><strong>Méthodologies :</strong> Appliquer des frameworks comme Scrum ou Kanban adaptés à la Data Science (ex: CRISP-DM Agile).</li>
+                                    <li><strong>Rôles :</strong> Définir les responsabilités (Product Owner, Scrum Master, AI Lead).</li>
+                                    <li><strong>Rituels :</strong> Animer les sprints, les stand-ups, les revues et les rétrospectives.</li>
+                                    <li><strong>Gestion du Backlog :</strong> Prioriser les "user stories" et les tâches techniques en fonction de la valeur métier et de la faisabilité.</li>
+                                </ul>
+                            </article>
+                            <article class="p-6 bg-gray-50 rounded-lg">
+                                 <h4 class="font-bold text-xl mb-3 text-teal-800">Répartition de l'Effort (Typique)</h4>
+                                <div class="chart-container h-64 md:h-80">
+                                    <canvas id="effortChart"></canvas>
+                                </div>
+                            </article>
+                        </div>
+                        <div>
+                             <article class="p-6 bg-gray-50 rounded-lg h-full">
+                                <h4 class="font-bold text-xl mb-3 text-teal-800">Coordination de la Réalisation Technique</h4>
+                                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                     <li><strong>Communication :</strong> Assurer une communication fluide entre les experts techniques et les parties prenantes métier.</li>
+                                    <li><strong>Suivi de la Progression :</strong> Utiliser des outils (Jira, Trello) et des burndown charts pour visualiser l'avancement.</li>
+                                    <li><strong>Gestion des Risques :</strong> Identifier et mitiger les obstacles (qualité des données, performance du modèle, infrastructure).</li>
+                                    <li><strong>Validation et Qualité :</strong> Organiser les phases de test, de validation par les utilisateurs et s'assurer que la solution répond au besoin initial.</li>
+                                </ul>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section Interactive Dashboard -->
+            <section id="dashboard" class="mt-16">
+                 <h2 class="text-3xl font-bold text-center mb-4 text-gray-700">Tableau de Bord des Compromis</h2>
+                 <p class="text-center text-gray-600 mb-10 max-w-4xl mx-auto">En gestion de projet IA, il est rare de pouvoir tout optimiser. Améliorer la précision d'un modèle peut coûter cher en temps de calcul et en expertise. Un déploiement rapide peut se faire au détriment de la robustesse. Utilisez les boutons ci-dessous pour simuler différents scénarios et observer l'impact sur les priorités du projet.</p>
+                 <div class="text-center mb-6">
+                    <button class="scenario-button active border border-gray-300 rounded-full px-4 py-2 text-sm font-medium m-1" onclick="updateRadarChart('balanced')">Scénario Équilibré</button>
+                    <button class="scenario-button border border-gray-300 rounded-full px-4 py-2 text-sm font-medium m-1" onclick="updateRadarChart('fast')">Priorité: Time-to-Market</button>
+                    <button class="scenario-button border border-gray-300 rounded-full px-4 py-2 text-sm font-medium m-1" onclick="updateRadarChart('quality')">Priorité: Qualité Maximale</button>
+                    <button class="scenario-button border border-gray-300 rounded-full px-4 py-2 text-sm font-medium m-1" onclick="updateRadarChart('cheap')">Priorité: Coût Minimal</button>
+                 </div>
+                 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                 </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const lifecycleDetails = [
+            "<strong>Analyse des Besoins :</strong> C'est le point de départ. On identifie le problème métier, on évalue la faisabilité, on définit les objectifs et les métriques de succès. Un mauvais cadrage ici mène presque toujours à l'échec.",
+            "<strong>Conception & Cadrage :</strong> On traduit le besoin en spécifications techniques. On choisit les modèles potentiels, l'architecture logicielle, et on planifie le pipeline de données et MLOps. C'est le plan directeur du projet.",
+            "<strong>Développement & MLOps :</strong> Le cœur technique du projet. Les Data Scientists explorent les données, entraînent et évaluent les modèles. Simultanément, les MLOps Engineers construisent les pipelines automatisés pour l'intégration et le déploiement continus.",
+            "<strong>Coordination Agile :</strong> Le pilotage au quotidien. On organise le travail en sprints, on suit l'avancement, on lève les blocages et on s'assure que l'équipe reste alignée avec les objectifs, tout en s'adaptant aux découvertes.",
+            "<strong>Déploiement & Suivi :</strong> Le modèle est mis en production. Le travail ne s'arrête pas là : il faut surveiller ses performances en continu, détecter les dérives (drifts) et planifier les ré-entraînements pour maintenir sa qualité."
+        ];
+
+        function showLifecycleDetail(index) {
+            document.getElementById('lifecycle-detail').innerHTML = lifecycleDetails[index];
+            const steps = document.querySelectorAll('.lifecycle-step');
+            steps.forEach((step, i) => {
+                if (i === index) {
+                    step.classList.add('ring-2', 'ring-teal-500');
+                } else {
+                    step.classList.remove('ring-2', 'ring-teal-500');
+                }
+            });
+        }
+
+        function switchTab(event, tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        let radarChart, effortChart;
+
+        const radarData = {
+            balanced: [8, 7, 8, 7, 9],
+            fast: [6, 10, 5, 9, 7],
+            quality: [10, 5, 10, 6, 8],
+            cheap: [7, 6, 7, 10, 6]
+        };
+
+        function updateRadarChart(scenario) {
+            radarChart.data.datasets[0].data = radarData[scenario];
+            radarChart.update();
+            
+            const scenarioButtons = document.querySelectorAll('.scenario-button');
+            scenarioButtons.forEach(button => {
+                button.classList.remove('active');
+                if(button.getAttribute('onclick').includes(scenario)) {
+                    button.classList.add('active');
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            showLifecycleDetail(0);
+
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            radarChart = new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: ['Précision Modèle', 'Vitesse de déploiement', 'Robustesse/Scalabilité', 'Maîtrise des Coûts', 'Innovation/Complexité'],
+                    datasets: [{
+                        label: 'Priorités du Projet',
+                        data: radarData.balanced,
+                        fill: true,
+                        backgroundColor: 'rgba(13, 148, 136, 0.2)',
+                        borderColor: 'rgb(13, 148, 136)',
+                        pointBackgroundColor: 'rgb(13, 148, 136)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(13, 148, 136)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: false
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            pointLabels: {
+                                font: {
+                                    size: 13
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            const ctxEffort = document.getElementById('effortChart').getContext('2d');
+            effortChart = new Chart(ctxEffort, {
+                type: 'bar',
+                data: {
+                    labels: ['Collecte & Prép. Données', 'Entraînement Modèle', 'Déploiement & Infra.', 'Intégration & Test'],
+                    datasets: [{
+                        label: 'Pourcentage de l\'effort total',
+                        data: [50, 20, 15, 15],
+                        backgroundColor: [
+                            'rgba(15, 118, 110, 0.6)',
+                            'rgba(45, 212, 191, 0.6)',
+                            'rgba(107, 114, 128, 0.6)',
+                            'rgba(156, 163, 175, 0.6)'
+                        ],
+                        borderColor: [
+                             'rgba(15, 118, 110, 1)',
+                            'rgba(45, 212, 191, 1)',
+                            'rgba(107, 114, 128, 1)',
+                            'rgba(156, 163, 175, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
